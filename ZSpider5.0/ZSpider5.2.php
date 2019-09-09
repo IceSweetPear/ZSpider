@@ -5,7 +5,8 @@ class ZRedis
 
     public static $redis;
 
-    public static function init(){
+    public static function init()
+    {
         self::$redis = new Redis();
         self::$redis->connect('127.0.0.1', 6379);
     }
@@ -33,14 +34,16 @@ class ZRedis
         return $value;
     }
 
-    public static function lpush($key, $value){
+    public static function lpush($key, $value)
+    {
         if (is_object($value) || is_array($value)) {
             $value = serialize($value);
         }
         return self::$redis->lpush($key, $value);
     }
 
-    public static function rpush($key, $value){
+    public static function rpush($key, $value)
+    {
         if (is_object($value) || is_array($value)) {
             $value = serialize($value);
         }
@@ -48,7 +51,8 @@ class ZRedis
         return self::$redis->rpush($key, $value);
     }
 
-    public static function lpop($key){
+    public static function lpop($key)
+    {
         $value = self::$redis->lpop($key);
         $value_ser = @unserialize($value);
         if (is_object($value_ser) || is_array($value_ser)) {
@@ -57,7 +61,8 @@ class ZRedis
         return $value;
     }
 
-    public static function rpop($key){
+    public static function rpop($key)
+    {
         $value = self::$redis->rpop($key);
         $value_ser = @unserialize($value);
         if (is_object($value_ser) || is_array($value_ser)) {
@@ -66,7 +71,8 @@ class ZRedis
         return $value;
     }
 
-    public static function delete($key){
+    public static function delete($key)
+    {
         return self::$redis->del($key);
     }
 
@@ -129,13 +135,13 @@ class ZSpider
 
                     $pageUrl = $home . first($pageUrl);
 
-                    if (!empty($childTasks)){
+                    if (!empty($childTasks)) {
                         ZRedis::rpush('data_queue', ['urlList' => [$pageUrl], 'task_name' => first($childTasks)['name']]);
                     }
 
                     $html = getHtml($pageUrl);
 
-                    print_r(['pid'=>posix_getpid(), 'page' => $pageUrl, 'llen'=>ZRedis::$redis->llen('data_queue')]);
+                    print_r(['pid' => posix_getpid(), 'page' => $pageUrl, 'llen' => ZRedis::$redis->llen('data_queue')]);
                 }
 
                 return;
@@ -152,13 +158,13 @@ class ZSpider
                 }
             }
 
-            if (empty($childTasks)){
+            if (empty($childTasks)) {
                 return;
             }
 
             foreach ($childTasks as $childTask) {
 
-                if(empty($childUrlList)){
+                if (empty($childUrlList)) {
                     continue;
                 }
 
@@ -190,7 +196,7 @@ class ZSpider
 
             $index = 0;
             while ($index < array_get($config, 'task', 1)) {
-                $index ++;
+                $index++;
                 $pid = pcntl_fork();
                 if ($pid == -1) {
                 } elseif ($pid > 0) {
@@ -202,18 +208,18 @@ class ZSpider
                     while (true) {
                         $dataQueue = ZRedis::lpop('data_queue');
 
-                        if (empty($dataQueue)){
+                        if (empty($dataQueue)) {
                             sleep(2);
-                            echo posix_getpid()."sleep\n";
+                            echo posix_getpid() . "sleep\n";
                             $sleepCount--;
-                            if ($sleepCount < 0){
+                            if ($sleepCount < 0) {
                                 break;
                             }
                             continue;
                         }
                         $sleepCount = 3;
 
-                        print_r([posix_getpid()=>$dataQueue]);
+                        print_r([posix_getpid() => $dataQueue]);
 
                         $taskName = $dataQueue['task_name'];
                         $taskData = $dataQueue['urlList'];
@@ -228,9 +234,10 @@ class ZSpider
 
     }
 
-    public function getTaskDraw($taskContainer){
+    public function getTaskDraw($taskContainer)
+    {
         $childTasks = getChildTasks($taskContainer);
-        foreach ($childTasks as $childTask){
+        foreach ($childTasks as $childTask) {
             $childTaskName = $childTask['name'];
             $this->taskDraw[$childTaskName] = $childTask;
             $this->getTaskDraw($childTask);
@@ -267,7 +274,9 @@ $configs = [
                     'home' => '',
                     'data' => [
                         'page' => function ($pageInfo) {
-                            print_r($pageInfo['url']."-------------------------------------------------------");
+
+                            $html = $pageInfo;
+
                         },
                     ],
                 ],
@@ -310,9 +319,36 @@ function str_substr($start, $end, $str, $isLimit = false)
         } else {
             $resultList[] = trim($secondList[0]);
         }
+
     }
 
     return $isLimit ? '' : $resultList;
+}
+
+function preg_sub_url($html, $urlSub)
+{
+    if (strstr($urlSub, '#')) {
+
+        $urlSub = str_replace('/', '\/', $urlSub);
+
+        $pregSubUrl = '/(' . trim($urlSub, '#') . ')/';
+
+        $allUrl0 = str_substr('href="', '"', $html);
+        $allUrl1 = str_substr("href='", "'", $html);
+
+        $allUrl = array_merge($allUrl0, $allUrl1);
+
+        $urlList = [];
+        foreach ($allUrl as $aUrl) {
+            if (preg_match($pregSubUrl, $aUrl)) {
+                $urlList[] = $aUrl;
+            }
+        }
+        return $urlList;
+    }else{
+        return false;
+    }
+
 }
 
 function array_get($array, $index, $default = null)
