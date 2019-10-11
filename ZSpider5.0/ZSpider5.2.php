@@ -120,7 +120,7 @@ class ZSpider
                 $html = curlGetHtml($url);
             }
 
-//            print_r([$name => $url]);
+            print_r([$name => $url]);
 
             $pageData = dataFun($data, ['url' => $url, 'html' => $html]);
             fetchFun(array_get($this->on_fetch, $name), $pageData);
@@ -159,7 +159,7 @@ class ZSpider
             }
 
             if (empty($childTasks)) {
-                return;
+                continue;
             }
 
             foreach ($childTasks as $childTask) {
@@ -218,6 +218,10 @@ class ZSpider
                             continue;
                         }
                         $sleepCount = 3;
+
+                        if(!is_array($dataQueue)){
+                            continue;
+                        }
 
                         print_r([posix_getpid() => $dataQueue]);
 
