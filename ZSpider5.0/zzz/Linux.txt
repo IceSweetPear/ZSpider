@@ -1,0 +1,22 @@
+安装
+
+
+
+
+sudo /etc/init.d/networking restart
+
+常用方法
+
+	ls		查看当前目录下的文件
+		-r		查看文件权限
+
+	chrmod 		修改文件权限
+
+	sudo		使用高级权限
+
+	sudo su		使用顶级权限
+
+	wget
+	apt-get
+
+			

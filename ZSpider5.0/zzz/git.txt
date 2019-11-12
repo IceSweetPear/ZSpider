@@ -1,0 +1,82 @@
+
+Git命令
+	git status			查看缓存区文本变更状态
+
+  	git add .			将这些变更同步到本地仓库
+  	git commit -m '备注'	提交到本地仓库并且添加备注
+
+  	git pull			从远程仓库更新代码
+  	git push -u origin  **	将本地仓库指定分支上传到远程仓库
+ 	git push origin HEAD:** 	将本地当前分支上传到 指定分支
+
+	git fetch --all		刷新所有改动
+
+  	git checkout filename  	撤销不想要的文件
+ 	history		 	查看git命令历史
+	
+	git log		 	查看日志
+	git reflog		 	查看提交日志
+	git reset --hard xxx	 	回退到指定版本
+
+	git checkout 	 	分支名	切换分支
+	git checkout -b		创建一个分支 并切换
+	git checkout .		清空工作区文件
+	git branch 	 	查看当前分支  -r -a	 查看远程仓库分支
+	git branch -v：	 	各个分支最后一个提交对象的信息
+	git branch  	 	分支名 创建分支
+	git branch -d 	 	分支名 删除分支
+	git merge iss53	 	将指定分支合并到当前分支
+	git push -u origin 	 	将指定分支推到远程
+
+	git cherry		 	找到本地提交列表中,尚未推送到远程的提交
+		-v	 	可以展示出提交的注释信息
+	git cherry-pick xxx	 	可以合并某个提交到当前分支 
+	git show -p -1  	 	查看上次提交修改的内容
+
+	git diff master origin/master
+	git cherry -v origin/master 		可以比较本地HEAD分支和远程master分支之间的差别
+
+	git clean 
+		-d   # 删除未跟踪目录以及目录下的文件，如果目录下包含其他git仓库文件，并不会删除（-dff可以删除）。
+		-f    # 如果 git cofig 下的 clean.requireForce 为true，那么clean操作需要-f(--force)来强制执行。
+		-i    # 进入交互模式
+		-n   # 查看将要被删除的文件，并不实际删除文件
+		-df  # 想删除当前工作目录下的未跟踪文件以及文件夹运行：
+
+	
+	git config --global credential.helper store	记录账号密码
+
+
+
+	   mkdir：         XX (创建一个空目录 XX指目录名) 
+   pwd：          显示当前目录的路径。 
+   git init          把当前的目录变成可以管理的git仓库，生成隐藏.git文件。 
+   git add XX       把xx文件添加到暂存区去。 
+   git commit –m “XX”  提交文件 –m 后面的是注释。 
+   git status        查看仓库状态 
+   git diff  XX      查看XX文件修改了那些内容 
+   git log          查看历史记录 
+   git reset  –hard HEAD^ 或者 git reset  –hard HEAD~ 回退到上一个版本 
+                        (如果想回退到100个版本，使用git reset –hard HEAD~100 ) 
+   cat XX         查看XX文件内容 
+   git reflog       查看历史记录的版本号id 
+   git checkout — XX  把XX文件在工作区的修改全部撤销。 
+   git rm XX          删除XX文件 
+   git remote add origin https://github.com/tugenhua0707/testgit 关联一个远程库 
+   git push –u(第一次要用-u 以后不需要) origin master 把当前master分支推送到远程库 
+   git clone https://github.com/tugenhua0707/testgit  从远程库中克隆 
+   git checkout –b dev  创建dev分支 并切换到dev分支上 
+   git branch  查看当前所有的分支 
+   git checkout master 切换回master分支 
+   git merge dev    在当前的分支上合并dev分支 
+   git branch –d dev 删除dev分支 
+   git branch name  创建分支 
+   git stash 把当前的工作隐藏起来 等以后恢复现场后继续工作 
+   git stash list 查看所有被隐藏的文件列表 
+   git stash apply 恢复被隐藏的文件，但是内容不删除 
+   git stash drop 删除文件 
+   git stash pop 恢复文件的同时 也删除文件 
+   git remote 查看远程库的信息 
+   git remote –v 查看远程库的详细信息 
+   git push origin master  Git会把master分支推送到远程库对应的远程分支上
+

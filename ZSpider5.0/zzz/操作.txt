@@ -1,0 +1,38 @@
+	
+先查再用
+	$settingGeo = SettingGeo::where('level', 1)->get();
+	array_get($settingGeo->firstWhere('id', $subjectInfo->province), 'pinyin');
+	对于一个常用的 数据量不大的 Model 可以先查出来 再使用 Collect 丰富的方法 获取数据
+
+分页数据替换
+	$viewList = UserViews::where('user_id',get_user_id())->select('new_id')->paginate(15);
+     	$newsIdList = $viewList->pluck('new_id')->toArray();
+	$newsList = CommonNews::whereIn('id',$newsIdList)->get()
+	$viewList ['data'] = $newsList ['data'];
+	对于一个有关系 但无法直接分页的Model 可借助其关系 Model  进行分页
+
+双数组伪循环
+	将当前数组的键信息保存在一个新数组 并合并 
+	构造一个循环数组
+	
+where中取值
+            	->where(function ($query) {
+                	$query->where('year', $query->max('year'));
+            	})
+	在where中取数据并where
+
+foreach 替换	
+	foreach($list as &$item){
+		$item = strtoupper($item)
+	}
+
+递归爬虫
+	doTask('设计图'， urlList)
+	构造一个层级设计图  每个任务 根据 urlList 中的每个url 去生成 UrlList 
+	并获取自己的设计图去调用这个UrlList
+	
+双参数取消
+	传参数 123 想取消 3  传 1233 获取 重复的值 删除  
+	此操作 想删除一个 参数 但是不加删除的方法  而是  再次传过来 判断重复删除
+
+

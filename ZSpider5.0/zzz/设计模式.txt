@@ -1,0 +1,58 @@
+
+
+
+	单例模式
+		private static $_instance; 
+		private function __construct() {}	
+
+		public static function getInstance()
+        		{
+            			if (!(self::$_instance instanceof self)) {
+               		 	self::$_instance = new self();
+            		}
+           			return self::$_instance;
+        		}
+		单例模式 禁止new方法创建对象 getInstance() 返回一个 静态实例 保存在内存中 保证对象的唯一性 
+		PHP页面被解释执行后 所有相关资源都会被回收 所以只能针对单次页面请求
+
+	工厂模式
+		switch ($moduleName) {
+            			case 'Fight':   return new Fight($options[0], $options[1]);
+            			case 'Force':   return new Force($options[0]);
+            			case 'Shot':    return new Shot($options[0], $options[1], $options[2]);
+       		}
+		在一个类中 专门生产其他类
+
+		使用工厂类的时候 可以直接调用 也可以封装起来循环调用
+		用来降低耦合度
+
+	依赖注入(DI)
+		interface SuperModuleInterface
+		{
+    			public function activate(array $target);
+		}
+		创建一个能力接口 （限制/规范）
+
+		class XPower implements SuperModuleInterface
+		{
+    			public function activate(array $target)
+   	 		{
+    			}
+		}
+		创建一个超能力 实现了能力接口 
+
+		class Superman
+		{
+    			protected $module;
+
+    			public function __construct(SuperModuleInterface $module)
+    			{
+        				$this->module = $module
+   			}
+		}
+		在超人类中 构造函数参数 为 能力 接口 类型   因为 超能力 实现了 能力 接口  所以 超能力 也属于 能力 类型 
+
+		$superModule = new XPower;
+		$superMan = new Superman($superModule);
+		$superMan -> activate([]);
+		创建了超人类 参数为 超能力 X-激光  使用 X-激光     

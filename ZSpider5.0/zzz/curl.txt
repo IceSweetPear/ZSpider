@@ -1,0 +1,69 @@
+ 
+ 	CURLOPT_URL				url	
+
+	CURLOPT_HTTPHEADER			要传的header头
+
+	CURLOPT_SSL_VERIFYPEER			SSL验证
+
+	CURLOPT_SSL_VERIFYHOST			SSL验证
+
+	CURLINFO_HEADER_OUT			是否取Header头信息
+
+	CURLOPT_NOBODY				是否要正文信息
+
+	CURLOPT_RETURNTRANSFER			是否需要返回值
+	
+	CURLOPT_POST				请求方式
+
+	CURLOPT_POSTFIELDS			POST数据
+	
+	CURLOPT_USERAGENT			使用的设备信息
+
+	CURLOPT_FOLLOWLOCATION			获取重定向数据
+	
+	CURLOPT_BINARYTRANSFER			在启用CURLOPT_RETURNTRANSFER时候将获取数据返回	?
+	
+	CURLOPT_CONNECTTIMEOUT			在发起连接前等待的时间，如果设置为0，则不等待。
+
+	CURLOPT_TIMEOUT				设置curl允许执行的最长秒数
+
+	CURLOPT_BUFFERSIZE			每次获取的数据中读入缓存的大小，这个值每次都会被填满。20971520
+
+	CURLOPT_WRITEFUNCTION			设置一个回调函数，有两个参数，第一个是curl的资源句柄，第二个是写入的数据。数据写入必须依赖这个函数。返回精确的已写入数据的大小
+
+	CURLOPT_RANGE				截取字节获取	获取目标的指定字节段  1000-2000
+	
+
+	curl_init()					创建Curl
+
+	curl_setopt()				设置Curl参数	
+
+	curl_exec()				执行Curl
+
+	curl_getinfo($ch, $curlInfo)				获取Header头信息        需要取Header信息 curl_getinfo($ch, CURLINFO_HEADER_SIZE);   $header = substr($sContent, 0, $headerSize);
+
+
+		CURLINFO_HTTP_CODE			最后一个收到的HTTP代码
+		
+		CURLINFO_FILETIME			远程获取文档的时间，如果无法获取，则返回值为“-1”
+		CURLINFO_TOTAL_TIME			最后一次传输所消耗的时间
+		CURLINFO_NAMELOOKUP_TIME		名称解析所消耗的时间
+		CURLINFO_CONNECT_TIME			建立连接所消耗的时间
+		CURLINFO_PRETRANSFER_TIME		从建立连接到准备传输所使用的时间
+		CURLINFO_STARTTRANSFER_TIME		从建立连接到传输开始所使用的时间
+		CURLINFO_REDIRECT_TIME			在事务传输开始前重定向所使用的时间
+		
+		CURLINFO_SIZE_UPLOAD			上传数据量的总值
+		CURLINFO_SIZE_DOWNLOAD			下载数据量的总值
+
+		CURLINFO_SPEED_DOWNLOAD		平均下载速度
+		CURLINFO_SPEED_UPLOAD			平均上传速度
+		CURLINFO_HEADER_SIZE			header部分的大小
+
+		CURLINFO_HEADER_OUT			发送请求的字符串
+
+		CURLINFO_CONTENT_LENGTH_DOWNLOAD	从Content-Length: field中读取的下载内容长度
+	
+		CURLINFO_CONTENT_LENGTH_UPLOAD		上传内容大小的说明
+		CURLINFO_CONTENT_TYPE			下载内容的“Content-type”值
+

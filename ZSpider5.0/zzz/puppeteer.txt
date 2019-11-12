@@ -1,0 +1,74 @@
+puppeteer
+
+	const browser = await puppeteer.launch({		初始化puppeteer	
+		headless: false,		无头模式
+		slowMo:250,		慢速
+	});	
+
+	const page = await browser.newPage();			打开一个页面
+
+	browser.close()					关闭浏览器
+
+
+功能
+	await page.goto('http://www.baidu.com');			跳转到一个地址
+
+	await page.screenshot({				截图
+        		path: 'c:/temp/baidu.png'
+    	});
+
+	await page.waitFor(1000);				延时一秒	
+
+操作
+	const dimensions = await page.evaluate(() => {		在页面中执行代码 返回值
+		return {
+			width: document.documentElement.clientWidth,
+			height: document.documentElement.clientHeight,
+			deviceScaleFactor: window.devicePixelRatio
+		};
+	});
+
+	page.setCookie(...cookies)				设置cookie
+	
+获取
+	page.content()					获取页面内容
+
+	page.$(`#id`)					获取一个元素
+
+	page.$eval('input[name=search]', input => input.value);	获取元素属性
+
+
+输入	
+	await page.type("#login_field", "账号");			立即输入
+
+	await page.type("#password", "密码", {			延时输入		
+    		delay: 100
+  	})；
+
+	
+
+鼠标
+	page.click("input[type=submit]");			点击按钮	
+	
+	page.mouse.click(x, y[, options])
+	
+	page.mouse.up([options])
+	
+	page.mouse.down([options])
+	
+	page.mouse.move(x, y[, options])
+键盘
+	page.keyboard.down(key[, options])			按下一个键 触发事件
+	
+	page.keyboard.up(key)				松开一个键
+	
+	page.keyboard.press(key[, options])			按下一个键
+
+	page.keyboard.type('World', {delay: 100})			输入字符
+
+
+
+
+
+
+		

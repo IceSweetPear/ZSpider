@@ -1,0 +1,186 @@
+VUE	
+	var app = new Vue({
+	  el: '#app',						选择器
+	  data: {
+	    message: 'Hello Vu!'					变量
+	  }
+	  methods: {		
+	    reverseMessage: function () {				方法
+	      this.message = this.message.split('').reverse().join('')
+	    }
+	  }
+	  computed: {						计算属性 值会作为data变量  返回值会被缓存
+	    reversedMessage: function () {
+	      return this.message.split('').reverse().join('')
+	    }
+	  fullName: {
+	    get: function () {
+	      return this.firstName + ' ' + this.lastName
+	    },
+	    set: function (newValue) {
+	      var names = newValue.split(' ')
+	      this.firstName = names[0]
+	    }
+	  }
+	  }
+	  watch: {							监听器 当变量发生变化时 执行此方法
+	    firstName: function (val) {
+	      this.fullName = val + ' ' + this.lastName
+	    },
+	    lastName: function (val) {
+	      this.fullName = this.firstName + ' ' + val
+	    }
+	  }
+	})
+
+渲染
+
+	<div id="app">			
+		{{ message }}	
+	</div>
+
+	<span v-bind:title="message">
+	</span>
+
+指令
+	v-bind:title="message"			绑定title渲染	title 只是元素的属性  元素可以有存储很多属性
+	
+	v-bind:class="{ active: isActive}"		添加class名绑定
+	v-bind:class="classObj">   classObj: {'text': false}	对象方式
+	v-bind:class="[activeClass, errorClass]"		数组方式
+
+	v-bind:style="{ color: activeColor}"		绑定style样式
+	v-bind:style="styleObj" styleObj: {color: 'red'}	对象方式
+	v-bind:style="[baseStyles, overridingStyles]"	数组方式
+
+	v-if="seen"				条件控制
+	
+	v-else
+
+	v-show="ok"				显示隐藏元素
+
+	v-for="todo in todos"  {{ todo.text }}		循环
+	v-for="(item, index) in items"			获取索引
+
+	v-html="rawHtml"				渲染Html
+
+事件
+	v-on:click="reverseMessage"			点击触发函数
+	
+	v-on:focus="reverseMessage"
+
+	v-on:scroll="reverseMessage"
+
+	v-on:keyup="reverseMessage"
+
+函数
+	vm.$set(vm.items, indexOfItem, newValue)	响应式改变数组的值
+
+	$emit() 
+
+组件
+   组件通信
+	props		使用 props 来接收插槽承载的父组件的数据
+	
+	事件抛出		在插槽上定义 自定义事件 v-on:cbclick="bclick"  在子组件内部使用 $emit() 调用 自定义事件 访问 父组件方法
+	
+
+组件库
+	axios		Ajax请求库
+	
+		<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+	
+		      axios.get('https://yesno.wtf/api')
+		        .then(function (response) {
+		          vm.answer = _.capitalize(response.data.answer)
+		        })
+		        .catch(function (error) {
+		          vm.answer = 'Error! Could not reach the API. ' + error
+		        })
+
+
+
+
+	组件可以识别任意 元素 	任意元素 都有成为插槽的潜力==
+	
+	Vue.component('todo-item',   去识别 任意元素    
+
+	识别成功后  使用 template 去替换 插槽   原始插槽数据 通过  props 来继承 插槽的数据 并在模板中使用
+
+	插槽自身的所有绑定值 会 被 组件 模板继承  但是只继承给 模板的最父级元素   但是 一些 保留字  不会被展示  例如 key 或 props 继承的名字
+
+
+	el 属性 指定 元素 范围  只 影响范围以内的元素块   这样 不用重新渲染整个元素‘
+
+
+	每个组件也是一个 vue实例   但是data 必须 以 匿名函数的 形式返回回来数据
+
+
+	现在开始学习在父组件 触发 子组件的事件
+
+	先分开测试事件 再合在一起
+
+	首次测试父组件 的 点击实例结论 在v-on:click=""  在引号中 已经是 js 的范畴了 这里可以使用 js 表达式 可以调用函数
+
+	父级组件差不多了 试试子级组件触发事件
+
+	现在试了试 在子组件中获取 父组件 的 值  发现 父组件的值 变化的时候 子组件 会跟着变   感觉还行
+
+	现在试了 子组件调用 子组件中的方法 尚未跟父组件通信
+	---
+	监听子组件事件 也就是 子组件 可以 访问 父组件的方法  
+
+	这个功能很重要  跟 todo 一样 实现了 组件通信  在子组件插槽上 使用 自定义事件 子组件 内部模板 使用 $emit() 的方式 调用父组件方法
+
+$emit()
+	向上抛出一个事件 
+
+	调用父级组件方法()-> 可以 组件插槽上定义一个 自定义事件	组件模板内  使用 $emit('事件名') 的方法 抛出一个 事件
+	
+	组件插槽 就可以捕获 这个事件 和 此事件的传参 可访问 父组件方法
+
+
+v-model
+	v-model 作用在 input上 当input输入的时候就监听变化 同时改变变量
+	
+	<input
+	  v-bind:value="searchText"
+	  v-on:input="searchText = $event.target.value"
+	>
+
+	因为 v-model 只是上述的一个语法糖 本质就跟上述一样
+
+	可以看到 有个v-bind:value 来在输入框展示输入的字符  但是input本身也可以做到 
+	
+	重要的是 v-on:input="searchText = $event.target.value"   相当于 v-on:click捕捉点击事件一样
+
+	v-on:input  就是 捕捉了 输入框的 输入事件 也就是  当输入的时候 获取值 保存到 searchText变量里 就这么简单==
+
+	v-model 只是语法糖而已  
+
+
+！大问题 我以为 props  和 $emit 抛出事件的 方式是为了 父子组件之间的值传递   但是 app.data app.func() 可以直接跨组件调用啊？ 
+
+！ 插槽 和 组件 之间 的参数 是什么关系 是继承 还是 一个 媒介？ 
+
+
+
+Vue 能干什么？
+
+	vue的局部刷新很好  先不说 以后脚手架什么的 单是现在 配合 layui  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

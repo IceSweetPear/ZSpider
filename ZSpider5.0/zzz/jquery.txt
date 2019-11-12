@@ -1,0 +1,63 @@
+jquery有的 不用 js 的 只用一些 基础的 js 方法  
+
+
+
+选择器
+	$('#id')				id选择器
+	$('.className') 			class选择器
+
+元素属性
+	$('#id').html()			获取 / 赋值   元素 html 
+	$('#id').attr('id')			获取 / 赋值 元素 指定属性 
+元素周边
+	$('#id').parent()			获取指定元素的 父元素
+
+元素操作
+	$('#id').addClass('class')
+	$('#id').removeClass('class')		
+
+元素内容
+	$('#id').append('zzz')		在元素 的 内部 追加内容
+	
+事件
+	  $("p").on("click",function(){});	第一个参数 为 事件
+
+	$('id').click();	
+
+	$('id').ready(function(){});
+		
+
+函数
+	遍历
+		$.each(array, function($key, $value){})			遍历数组
+		$.each($("input:hidden"), function($key, $value){})		遍历元素
+		$("input:hidden").each(function($key, $value){})		遍历元素
+
+
+
+
+
+
+
+
+
+常用js方法
+
+字符串
+		
+
+数组
+
+	array.join('，')		数组根据 ， 合成 字符串
+
+
+windows
+	history
+		history.go
+		history.length
+		history.state
+		history.pushState(stateObj, "page 2", "bar.html");
+
+
+
+

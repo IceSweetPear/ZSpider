@@ -1,0 +1,536 @@
+
+Artisan指令
+	artisan 						查看所有指令
+
+	artisan make:model Flight				注册model
+
+	artisan make:resource User				生成资源类
+
+	artisan make:controller FileName/IndexController
+	
+	artisan make:middleware MiddlewareName
+
+	artisan make:seed *  				注册seeder (数据库填充)
+	artisan db:seed * 					启动seeder
+
+	artisan make:command */*.class  			注册command 目录为 Consoles/Commands
+
+	artisan make:migration create_users_table		创建迁移
+	artisan migrate					执行迁移
+	
+	artisan make:provider RiakServiceProvider  		生成服务提供器
+
+	artisan make:observer UserObserver --model=User    	生成观察者
+
+	artisan event:generate				生成监听文件
+
+	artisan admin:make UserController --model=App\\User
+
+	php artisan queue:work --queue=high,default,low				执行计划
+
+
+路由
+	Route::get('user/profile', 'UserController@showProfile')->name('profile');
+	Route::post('post', 'PostController@store');
+	路由组
+		Route::group(['middleware' => 'auth'], function () {
+    			Route::get('/', function (){	
+  			 });
+  			Route::get('user/profile', function () {
+			});
+		});
+	route('web.news')		根据route名生成url
+
+控制器
+	use App\Http\Controllers\Controller;
+		class UserController extends Controller{
+			public function index(){
+			}
+		}
+视图
+	return view('greeting/show', ['name' => 'James']);	返回视图 携带数据   目录为resouses/views/
+	
+	use Illuminate\Support\Facades\View;	
+	View::share('key', 'value');    	在 服务提供者 app/providers/AppServiceProvider.php boot 方法中定义 可以将指定数据分配到所有视图文件  
+	若自己创建服务提供者需要继承 use Illuminate\Support\ServiceProvider ServiceProvider类
+
+	use Illuminate\Support\Facades\View;
+	if (View::exists('emails.customer'))	判断存不vu你在
+
+请求
+	use Illuminate\Http\Request;
+   	public function update(Request $request, $id)
+    	{
+		数据
+			$request->all();			获取到所有输入数据:
+			$request->input('name');		获取用户输入数据
+			$request->input('name', 'Sally');	当请求的输入数据不存在于此请求时，返回该默认值：
+			$request->has('name')；		检测请求参数
+			$res = $request->file('file');		获取文件
+			$cookies = $request->cookie();	获取cookie	
+			return response('Hello World')->cookie('name', 'value', $minutes); 设置cookie
+			$request->session()->get('key')	获取session
+			session('key')			辅助函数获取session
+			session(['key' => 'value']);		设置cookie 关联数组形式
+			$request->session()->push('user.teams', 'developers');	保存数据进 Session 数组值中
+			$request->session()->pull('key', 'default');		从 Session 中取出并删除数据
+			$request->session()->forget('key');			删除一条数据
+			$request->session()->flush();				删除所有数据
+
+       		$request->path(); 		path 方法返回请求路径信息
+       		$request->is('admin/*')	is 方法可以验证收到的请求路径和指定规则是否匹配
+       		$request->url();		获取传入请求的完整 URL
+       		$request->method()	返回 HTTP 的请求方式
+       		$request->isMethod('post')	判断是否为指定请求方式
+		$ip = $request->ip()	获取请求ip
+		$port = $request->getPort();	获取请求的端口
+			
+    	}
+响应
+	return response($content)		返回响应内容  设置响应头 设置响应cookie
+                ->header('Content-Type', $type)
+                ->cookie('name', 'value', $minutes);
+
+	response()->json([]);		响应json格式数据
+
+	return response()->download($pathToFile, $name, $headers);     响应用户下载文件
+重定向
+	return redirect('home/dashboard');		重定向到url
+	return redirect()->route('profile', ['id' => 1]);	重定向到路由名
+	return redirect()->action('UserController@profile', ['id' => 1]);  重定向到控制器函数
+
+集合
+	$collection = collect([1, 2, 3]);		创建集合
+	操作
+		  -> pop()		从集合移除并返回最后一个元素
+		  -> shift()	移除并返回集合的第一个集合项	
+		  -> prepend()	将指定的值添加的集合的开头
+		  -> pull()		把指定键对应的值从集合中移除并返回
+		  -> push()	把指定的值追加到集合项的末尾
+		  -> put()		在集合内设置给定的键值对
+		  -> flip()		将集合的键值做交换	
+		  -> combine()	将一个集合的值作为键，再将另一个数组或集合的值作为值合并成一个集合：	
+		  -> implode('-')	拼接成字符串
+		  -> forget()	通过键从集合中移除数据项  不返回集合 只调用集合
+		  -> shuffle()	打乱集合
+		  -> reverse()	倒转集合项的顺序，并保留原始的键 反转
+		  -> concat()	方法将给定的 数组 或集合值追加到集合的末尾
+		  -> merge()	方法将给定的 数组 或集合合并原集合 同名的键将覆盖
+		  -> chunk(4)	将一维集合分割成二维集合
+		  -> collapse()	将一个多维集合拍扁为一维集合
+		  -> flatten()	将多维度的集合变成一维的 只保留值
+		  -> slice(4, 2);	从4开始切割2个
+		  -> groupBy()	分组
+	查询		
+		  -> all()		返回底层数组
+		  -> contains()	判断集合是否包含一个给定项  一个参数为值 两个参数为键值对
+		  -> count()	返回集合中所有项的数目	
+		  -> diff([2, 4, 6, 8])	与另一集合或数组进行比较 取差集 返回集合		
+		  -> first()		返回集合的第一个元素
+		  -> last()		返回集合最后一个元素
+		  -> random()	从集合中返回一个随机项
+		  -> get()		返回给定键的数据项，如果不存在，返回null	
+		  -> keys()	返回集合的所有键
+		  -> values()	返回所有值(重置键)
+		  -> only()	返回集合中所有指定键的集合项
+		  -> except()	返回集合中除了指定键之外的所有集合项
+		  -> search()	搜索指定的值返回键
+		  -> take(3)	取出几位
+		  -> pluck('')	获取 二维数组 的 某个键 构成 的 新数组
+		  -> partition()	list($a, $b) = $collection->partition(function ($i) {return $i < 3;}); 过滤数组 $i 满足的放 $a  不满足的放$b
+	判断	
+		  -> contains()	判断集合是否包含一个给定项	
+	回调
+		$collection->map(function ($item, $key) {	遍历集合并将每一个值传入给定的回调函数。该回调函数可以任意修改集合项并返回，从而生成被修改过集合项的新集合
+    			return $item * 2;
+		});		
+		$collection->each(function ($item, $key) {	迭代数据回调 遇到false 终止循环
+		});	
+		$collection->filter(function ($item) {		通过给定回调过滤集合，只有通过给定测试的数据项才会保留下来 返回集合
+    			return $item > 2;
+		});
+		$collection->reject(function ($item) {		通过给定回调过滤集合，只有通过给定测试的数据项会去掉 返回集合
+    			return $item > 2;
+		});
+		$collection->contains(function ($key, $value) {    迭代回调函数判断 满足一次则返回true 
+    			return $value > 5;
+		});
+		$collection->when(true, function ($collection) {	当第一个参数为真 执行操作
+    			return $collection->push(4);
+		});			
+	杂项		
+		OrderResource::collection($orderList)->toResponse(request())->original			取元数据
+		
+集合
+		$collection->jsonSerialize()
+		$this->when(Auth::user()->isAdmin(), 'secret-value')
+		$this->mergeWhen(Auth::user()->isAdmin(), [
+            			'first-secret' => 'value',
+           			 'second-secret' => 'value',
+       		])
+		PostResource::collection($this->whenLoaded('posts')),
+	
+数据库
+	连接其他数据库
+		$users = DB::connection('foo')->select(...);
+	增
+		DB::table('users')->insert(   				添加数据可以是一维或二维数组
+    			['email' => 'john@example.com', 'votes' => 0]
+		);
+		$id = DB::table('users')->insertGetId(			增加数据返回自增ID
+   			 ['email' => 'john@example.com', 'votes' => 0]
+		);	
+	删
+		DB::table('users')->delete(); 		删除所有行
+		DB::table('users')->where('votes', '>', 100)->delete();
+		DB::table('users')->truncate(); 		删除所有行并且自增ID归零
+	改
+		DB::table('users')
+           			 ->where('id', 1)
+           			 ->update(['votes' => 1]);
+	查
+		$users = DB::table('users')->get();
+		$user = DB::table('users')->where('name', 'John')->orwhere(['z'=>1,'zz'=>2])->first();	获取第一行
+		$email = DB::table('users')->where('name', 'John')->value('email');	获取一个值
+		$titles = DB::table('roles')->pluck('title');		获取 二维数组 的 某个键 构成 的 新数组
+		$users = DB::table('users')->select('name', 'email as user_email')->get();
+		$users = DB::table('users')->distinct()->get();	强制让查询返回不重复的结果
+		$users = DB::table('users')->select('name')->addselect('sex')->get(); 增加选择
+		
+		$users = DB::table('users')					连表查询
+           			  ->join('contacts', 'users.id', '=', 'contacts.user_id')
+        			  ->join('orders', 'users.id', '=', 'orders.user_id')
+          			  ->select('users.*', 'contacts.phone', 'orders.price')
+          			  ->get();
+		$users = DB::table('users')
+           			 ->leftJoin('posts', 'users.id', '=', 'posts.user_id')
+           			 ->get();  	
+		$users = DB::table('sizes')
+            			->crossJoin('colours')
+            			->get();
+
+		$users = DB::table('users')->whereIn('votes', '=', [1,23,4,56])->get();
+	
+		Model::offset(0)->limit(10)->get();	offset，limit （offset 设置从哪里开始，limit 设置想要查询多少条数据
+		Model::skip(3)->take(3)->get()；	skip，take （sikip 跳过几条，take取多少条数据）
+		Model::cursor() 游标便利
+
+		DB::connection()->enableQueryLog();	
+		print_r(DB::getQueryLog())		输出上次执行的sql
+
+		$users = DB::table('users')
+            			->join('contacts', 'users.id', '=', 'contacts.user_id')
+            			->join('orders', 'users.id', '=', 'orders.user_id')
+            			->select('users.*', 'contacts.phone', 'orders.price')
+           			->get();
+		DB::table('users')
+       			->join('contacts', function ($join) {
+            			$join->on('users.id', '=', 'contacts.user_id')
+                 		->where('contacts.user_id', '>', 5);
+        })
+        ->get();
+	操作
+		->inRandomOrder()				随机排序
+
+ORM模型
+	$users = User::with('post')->get()				直接将关联模型加载			加载附表
+
+	$users = User::with(['posts' => function ($query) {			关联模型 条件判断			筛选 满足附表的主表数据  加载附表
+    		$query->where('title', 'like', '%first%');
+	}])->get();	
+
+	$user = User::has('post.votes', ‘>’, '3')->get();			关联模型 条件判断			筛选 满足附表的主表数据  不加载附表
+					
+	$users= User::whereHas('posts', function ($query) {		在关联中 做出关联表的条件判断		筛选 满足附表的主表数据 不加载附表
+    		$query->where('title', 'like', '%first%');
+	})->with('post')->get();					再加载附表数据
+
+	
+	->paginate(15)->withPath('/university/list/')			分页链接的get拼接
+		          ->apends()					拼接get参数
+
+	->create()
+	->firstOrNew()->save()					找不到就创建一个 返回创建的模型	
+	->firstOrCreate()->save()					找不到就创建一个
+			
+		
+	->withTrashed()						获取包括软删除的数据
+	->onlyTrashed			
+	->restore();						恢复软删除的数据
+	->forceDelete();						硬删除	
+
+	->orderBy(\DB::raw('RAND()'));				随机排序
+	->orderByRaw('RAND()');					随机排序
+	->whereRaw('find_in_set(' . $id . ', `major_standard`)')		在数组之中
+
+	->setTable(DB::connection('test_db')->raw('test' . ' FORCE INDEX(tt)'))->where('tt', 1)	强制使用索引
+
+	->select(\DB::raw('min(id) AS id'))				分组 聚合查询
+            	->groupBy('province')
+	
+	->toArray()
+	->toJson()
+	
+Helper函数
+	数组函数
+		array_add()	添加给定键值对到数组，如果给定键不存在的话    array_add(['name' => 'Desk'], 'price', 100);
+		array_divide()	返回两个数组，一个包含原数组的所有键，另外一个包含原数组的所有值
+		array_except()	从数组中移除给定键值对   第一个参数为数组  第二个为要移除的键
+		array_only()	从给定数组中返回指定键值对  第一个参数为数组 第二个为索引数组 值为保留目标数组的值
+		array_get()	方法使用”.“号从嵌套数组中获取值
+		array_pull()	从数组中返回并移除键值对 第一个参数为数组 第二个为要移除的键
+		array_where()	使用给定闭包对数组进行过滤   array_where($array, function ($key, $value) {return is_string($value);}); return为true则移除
+		array_sort（）	对数组进行排序
+		array_pluck()	从二维数组取相同的列 不存在 为空
+		head()		返回数组第一个元素
+		last()		返回数组最后一个元素
+	路径函数
+		app_path()	返回app目录的绝对路径
+		base_path()	返回项目根目录的绝对路径	base_path('vendor/bin');  还可以通过相对路径返回绝对路径
+		config_path()	返回应用配置目录的绝对路径
+		database_path()	返回应用数据库目录的绝对路径
+		public_path()	返回public目录的绝对路径
+	字符串函数
+		camel_case()	将下划线字符串转化为按驼峰式命名规则的字符串 zzz_zzz => zzzZzz
+		snake_case()	将驼峰转为下划线
+		e() 		将html字符转为html文本
+		str_is()		判断给定字符串是否与给定模式匹配，星号可用于表示通配符   $value = str_is('foo*', 'foobar');  true
+		str_limit()		分割字符串 超出 补第三个参数字符 默认...
+
+缓存
+
+	Cache::put()					设置
+	Cache::get()					获取
+	Cache::increment('plan_discount_user_total');		+1
+
+
+Blade 模板引擎分
+	赋值
+		Welcome, {{ $name or 'California'}
+	循环
+		普通循环
+		@foreach ($lists as $list)
+		<li>{{ $list }}</li>
+		@endforeach
+
+		处理变量为空的情况
+		@forelse ($lists as $list)
+		<li>{{ $list }}</li>
+		@empty
+		<li>You don't have any lists saved.</li>
+		@endforelse
+	if判断
+		@if (count($records) === 1)
+		 I have one record!
+		@elseif (count($records) > 1)
+		 I have multiple records!
+		@else
+		 I don't have any records!
+		@endif
+	包含子视图
+		 @include('shared.errors')
+	继承父视图
+		@extends('layouts.app')
+	继承页面布局
+		@section('sidebar')
+   			 @parent		加了@parent 会把父类section名一样的页面拿过来 不加的话会重写
+ 		 	<p>This is appended to the master sidebar.</p>
+		@endsection
+
+数据库结构同步
+	php artisan make:migration create_users_table	创建
+	php artisan migrate		运行
+
+	extends Migration
+	Schema::create('users', function (Blueprint $table) {}
+	
+	迁移属性
+	$table->increments(‘id');			数据库主键自增 ID
+	$table->string('name', 100);			等同于数据库中的 VARCHAR，带一个长度
+	$table->text('content');
+	$table->integer(‘votes');			等同于数据库中的 INTEGER 类型	
+	$table->float('amount');			等同于数据库中的 FLOAT 类型
+	$table->boolean('confirmed');		等同于数据库中的BOOLEAN类型
+	$table->char(‘name', 4);			等同于数据库中的 CHAR 类型
+	$table->dateTime(‘created_at');		等同于数据库中的 DATETIME 类型
+	$table->enum(‘choices', [‘foo','bar']);		等同于数据库中的 ENUM 类型
+	$table->tinyInteger(‘numbers');		等同于数据库中的 TINYINT 类型
+	$table->timestamps();			添加 created_at 和 updated_at 列
+	$table->softDeletes();			添加delete_at
+	迁移约束
+	->comment('my comment')	添加注释信息
+	->first()		 将该列置为表中第一个列 (仅适用于 MySQL)
+	->after(‘column')	 将该列置于另一个列之后 (仅适用于 MySQL)
+	->nullable()	 允许该列的值为 NULL
+	->default($value)  	 指定列的默认值
+	->unsigned()	 设置 integer 列为 UNSIGNED
+	索引
+	->primary('id');
+	->primary(['id', 'parent_id']);	
+	->unique();
+	->index('state');
+	->spatialIndex('location');
+	修改
+	$table->string('name', 50)->nullable()->change();	修改长度
+	$table->renameColumn('from', 'to');		修改字段名
+	$table->dropColumn('votes');			删除列
+	$table->dropColumn(['votes', 'avatar', 'location']); 多列删除
+
+监听
+	php artisan event:generate
+
+
+Helpers
+	String
+		str_limit()			限制中文字符串 接 ...
+		mb_strlen()		分割中文字符串
+
+
+laravel-admin
+
+快速开始
+	路由器
+		php artisan admin:make UserController --model=App\User		创建一个路由器
+	路由
+		$router->resource('users', UserController::class);			创建一个路由
+	菜单
+		http://localhost:8000/admin/auth/menu				添加菜单
+	
+页面
+
+	$content->header('填写页面头标题');
+	$content->description('填写页面描述小标题');
+	$content->breadcrumb(['text' => '首页', 'url' => '/admin']);
+	$content->body('hello world');
+
+	$content->row('hello');
+	$content->row(function(Row $row) {
+		$row->column(4, 'foo');
+    		$row->column(4, 'bar');
+	});
+
+	$row->column(8, function (Column $column) {
+		$column->row('111');
+		$column->row('222');
+	});
+模型表格
+	$grid = new Grid(new Movie);			使用model 创建一个表格
+
+	$grid->column('id', 'ID')			添加 id字段 标题为 ID  
+
+	$grid->username('用户名');			添加 username字段 标题为 用户名 
+
+列回调函数
+	$grid->column('id', 'ID')->display(function($userId) {			标题回调
+		return User::find($userId)->name;
+	});
+
+	$grid->filter(function ($filter) {						增加筛选条件
+		$filter->between('created_at', 'Created Time')->datetime();			
+	});
+
+	$grid->map(function ($path) { 
+		return 'http://localhost/images/'. $path;
+	})
+
+
+模型表格数据
+	$grid->model()->where('id', '>', 100);
+	
+	$grid->model()->orderBy('id', 'desc');
+		
+	$grid->model()->take(100);
+
+	$grid->paginate(15);
+
+禁用功能
+	$grid->disableCreateButton();		禁用创建按钮
+	
+	$grid->disablePagination();		禁用分页条
+
+	$grid->disableFilter();		禁用查询过滤器
+
+	$grid->disableExport();		禁用导出数据按钮
+
+	$grid->disableRowSelector();		禁用行选择checkbox
+		
+	$grid->disableActions();		禁用行操作列
+
+	$grid->disableColumnSelector();	禁用行选择器
+
+	$grid->perPages([10, 20, 30, 40, 50]);	设置分页选择器选项
+
+列属性
+	$grid->column('title')->setAttributes(['style' => 'color:red;']);
+	
+	->style('max-width:200px;word-break:break-all;');
+		
+	->width(200);
+
+	->color('#ffff00');
+
+	->hide();
+
+	->sortable();
+
+
+	->filesize();		文件大小转为 11Mb
+	
+	->downloadable();		连接转为下载链接
+
+	->copyable();		复制按钮
+
+	->qrcode();		二维码
+
+	->image('http://xxx.com', 100, 100);	图片 多图 值 为数组
+	
+	->label();			小标签    参数可选`danger`、`warning`、`info`、`primary`、`default`、`success`
+
+	->label([
+		1 => 'default',
+		2 => 'warning',
+		3 => 'success',
+		4 => 'info',
+	]);			不同值 为 不同标签
+
+	->icon([
+		0 => 'toggle-off',
+		1 => 'toggle-on',
+	], $default = '');		展示为 图标 参考 http://fontawesome.io/icons/
+
+	->link($href);		链接
+
+	->table();			显示为 表格 需要值为数组
+
+	->progressBar($style = 'primary', $size = 'sm', $max = 100);		展示为 进度条  danger、warning、info、primary、default、success    sm、xs、xxs，$max 为 最大范围
+
+	->loading([1, 2, 3]);		值为之一 显示等待
+
+	->carousel($width = 300, int $height = 200, $server);		值为图片数组 展示 图片轮播
+
+	->date('Y-m-d');		时间格式化
+
+	->bool();			布尔值 显示 对勾 叉号
+
+	->using([			带颜色的圆圈
+		1 => '审核通过',
+		2 => '草稿',
+		3 => '发布',
+		4 => '其它',
+	], '未知')->dot([
+		1 => 'danger',
+		2 => 'info',
+		3 => 'primary',
+		4 => 'success',
+	  ], 'warning');
+		
+列格式
+	$grid->column('images')->images();
+
+
+
+
+
+
+
+

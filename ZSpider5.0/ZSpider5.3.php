@@ -126,6 +126,9 @@ class ZSpider
             fetchFun(array_get($this->on_fetch, $name), $pageData);
 
             if ($page) {
+
+                ZRedis::rpush('data_queue', ['urlList' => [$url], 'task_name' => first($childTasks)['name']]);
+
                 while ($html) {
                     $pageUrl = getUrlList($html, $urlSub);
 
@@ -135,9 +138,7 @@ class ZSpider
 
                     $pageUrl = $home . first($pageUrl);
 
-                    if (!empty($childTasks)) {
-                        ZRedis::rpush('data_queue', ['urlList' => [$pageUrl], 'task_name' => first($childTasks)['name']]);
-                    }
+                    ZRedis::rpush('data_queue', ['urlList' => [$pageUrl], 'task_name' => first($childTasks)['name']]);
 
                     $html = getHtml($pageUrl);
 
@@ -275,7 +276,25 @@ $configs = [
                     'data' => [
                         'page' => function ($pageInfo) {
 
-                            $html = $pageInfo;
+                            $html = $pageInfo['html'];
+
+                            $title = str_substr('<title>', 'txt下载_全集下载', $html, true);
+
+                            $downLoadLink = first(preg_sub_url($html, '#http://down.uu234.cc/txt/(.*)#'));
+
+                            if (empty($downLoadLink)) {
+                                return;
+                            }
+
+                            print_r($title."\n");
+
+                            $newFile = 'xs/' . $title;
+
+                            $file = httpcopy($downLoadLink, $newFile);
+
+                            $fileType = str_substr('/', ';', get_file_mini_type($file), true);
+
+                            rename($newFile, $file . '.' . $fileType);
 
                         },
                     ],
@@ -299,6 +318,14 @@ $zspider->fetch_url_list['fetch_url_list'] = function ($url) {
 };
 
 $zspider->start($configs);
+
+function get_file_mini_type($file){
+    $fInfo = finfo_open(FILEINFO_MIME);
+    $filename = $file;
+    $type = finfo_file($fInfo, $filename);
+    finfo_close($fInfo);
+    return $type;
+}
 
 function str_substr($start, $end, $str, $isLimit = false)
 {
@@ -345,7 +372,7 @@ function preg_sub_url($html, $urlSub)
             }
         }
         return $urlList;
-    }else{
+    } else {
         return false;
     }
 
@@ -581,7 +608,7 @@ function http_header_to_arr($header_str)
     return $header_arr;
 }
 
-function getUrlParameterArray(String $url)
+function getUrlParameterArray($url)
 {
     $urlArray = [];
     if (strstr($url, '?')) {

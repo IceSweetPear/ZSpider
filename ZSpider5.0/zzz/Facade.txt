@@ -1,0 +1,39 @@
+   
+
+ public static function __callStatic($method, $args)					当 facade 类调用一个不存在的静态方法时 执行此方法 第一个参数为 方法名 第二个参数为 参数数组
+    {
+        $instance = static::getFacadeRoot();						获取(寻找) facade 实际类的 的 实例
+	
+        if (! $instance) {
+            throw new RuntimeException('A facade root has not been set.');			不存在就抛异常
+        }
+
+        return $instance->$method(...$args);					存在 就用这个实例 去执行 这个实例的 静态方法      参数为 这个数组解析出来的变量
+    }   
+
+
+
+    public static function getFacadeRoot()
+    {
+        return static::resolveFacadeInstance(static::getFacadeAccessor());			执行 resolveFacadeInstance()  方法 参数为 getFacadeAccessor()   返回 绑定在 facade 中的 别名      此别名应与 注册到 容器中的 别名一致 
+    }
+
+
+
+protected static function resolveFacadeInstance($name)
+    {
+        if (is_object($name)) {							如果这个 名称 是一个对象 就直接返回 
+            return $name;
+        }
+
+        if (isset(static::$resolvedInstance[$name])) {					如果 facade 的 $resolvedInstance 已经保存了 这个名称
+            return static::$resolvedInstance[$name];					就直接返回
+        }
+
+        return static::$resolvedInstance[$name] = static::$app[$name];			否则 去app中寻找这个名称 并保存在 facade 的 $resolvedInstance 中					
+    }
+
+
+
+	Route 通过 绑定在  app.php 中的别名 寻找到 与facade 绑定的类	     __callStatic  方法  当 绑定到 facade 的实例  去执行一个静态方法时        通过 绑定的别名 去容器中 寻找 真正实例         去执行此静态方法
+

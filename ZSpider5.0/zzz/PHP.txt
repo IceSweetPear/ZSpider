@@ -1,0 +1,152 @@
+  print_r(array_intersect(array_unique(str_split($a)),array_unique(str_split($b))));
+
+邮件
+	$to = "someone@example.com";         // 邮件接收者
+	$subject = "参数邮件";                // 邮件标题
+	$message = "Hello! 这是邮件的内容。";  // 邮件正文
+	$from = "someonelse@example.com";   // 邮件发送者
+	$headers = "From:" . $from;         // 头部信息设置
+	mail($to,$subject,$message,$headers);
+	echo "邮件已发送";
+
+Cookie
+	setcookie("user", "runoob", time()+3600);
+
+
+字符串
+	ord() 			返回字符串首个字母的ASCLL编码
+	chr() 			传入ASSCLL编码返回字符
+	trim() 			清除两侧空格
+	rtrim()			清除右空格
+	ltrim()			清除左空格
+	substr();      		分割字符串
+	strrchr()			返回指定字符串后的字符串
+	mb_substr() 		分割中文字符串
+	stripslashes() 		删除所有反斜杠
+	strrev() 			反转字符串
+	str_split()  		字符串分割到数组中
+	str_shuffle() 		打乱字符串
+	strtolower() 		转小写
+	strtoupper() 		转大写
+	ucfirst()   			首字母大写
+	lcfirst()   			首字母小写
+	ucwords()   		每个单词的首字母转为大写
+	htmlentities()		将所有特殊字符文本转为HTML实体
+	htmlspecialchars()   		将特殊字符文本转为HTML实体
+	strip_tags			去除html和php标签
+	strcasecmp()        		比较两个字符串（不区分大小写）：
+	strcmp(str1，str2)   		比较两个字符串（区分大小写）
+	explode(); 		把字符串按指定字符分割到数组
+	implode(separator,array)
+	fprintf(file,String) 		将字符串写入文件中 返回写入的字符串长度
+	str_replace()
+	md5()    			以MD5方式编码
+	md5_file()
+	sha1()	   		以sha1方式编码
+	sha1_file()		
+	stripos() 			查找字符串在另一字符串首次出现的位置
+	strrpos() 			查找字符串在另一字符串最后出现的位置
+	stristr()			判断一个字符串是否包含另一个字符串
+	strlen()   			返回字符串长度
+	mb_strlen()		返回指定编码字符串长度
+	str_split()			分割字符串为数组
+	uniqid() 			生成唯一id
+
+数组	
+	array_values()		获取数组的所有值  （重置索引）
+	array_keys()		获取数组的所有键
+	array_intersect()		数组取交集
+	array_unique()		数组去重复
+	array_walk() 		对数组中的每个元素应用用户自定义函数：
+	array_column()		从多维数组中 的 子数组 指定的键 生成新数组  （指定多维数组，子数组键，用子数组的某个键作为新数组的键）
+	array_merge() 		合并数组 会将相同的键名覆盖
+	array_merge_recursive()  	合并数组  不会进行键名覆盖，而是将多个相同键名的值递归组成一个数组
+	sort()    			函数对索引数组进行降序排序	
+	rsort()  			函数对索引数组进行降序排序	
+	krsort() 			函数对关联数组按照键名进行降序排序
+	asort()  			函数对关联数组按照键值进行升序排序。
+	array_flip()  		键值反转
+	array_search() 		搜索值 返回第一次搜到的 键
+	array_reverse()		反转
+	array_slice() 		函数在数组中根据条件取出一段值，并返回。 
+	range（）			创建一个函数 开始值 结束值 步长
+	array_sum()		数组中所有值相加
+	
+文件
+	上传
+		enctype="multipart/form-data">
+	操作
+		move_uploaded_file($up_info['tmp_name'][$i],$ob_path.'/'.$new_name)  	移动文件
+
+		fopen			打开文件 获得文件句柄
+		feof() 			判断有没有到达文件末尾
+	读取
+		get_file_content		读取文件所有内容
+		fgets			读取一行内容
+		fgetcsv()			读取csv文件 一行 逗号分隔为数组
+	
+	文件夹
+		scandir()			扫描一个目录下的所有文件
+
+		
+文件控制
+	file_get_content('./text') 		读取文件中所有内容
+	file_put_contents($file, $content)	填充文件
+	$f = fopen("webdictionary.txt", "r") 	打开文件 跟多模式选择 没有则创建
+	feof($f) 				函数检查是否已到达 "end-of-file" (EOF)。	while(!feof($f))
+	fread($f,400) 			的第一个参数包含待读取文件的文件名，第二个参数规定待读取的最大字节数。
+	fgets($f) 				函数用于从文件读取单行。
+
+	file_put_contents($filename, $data) 	向文件写入内容
+	fwrite($f, 'world');
+
+	unlink($filename);			删除文件
+	rmdir($dir);			删除文件夹
+	
+	file_exists(文件);  			判断是否存在	
+	is_file($filename) 			判断是不是一个文件
+	is_writeable($filename)		可写
+	is_readable($filename)		可读
+
+	filectime($f) 			创建时间
+	filemtime()   			修改时间
+	fileatime()   			访问时间
+
+	filesize($filename); 			字节
+
+Redis
+	$redis->set($key, $value);
+	$redis->get($key);
+
+	$redis->expire($key,'4');		设置过期时间
+	$redis->setnx($key,$val,$expireTime);	赋值同时设置过期时间
+
+	$redis->del($key);			删除指定键
+
+
+多进程
+	
+	posix_getpid() 			获取当前进pid	
+	pcntl_signal (sign , callback)		安装一个信号处理器；
+	pcntl_signal_dispatch () 		调用每个等待信号通过pcntl_signal()安装的处理器
+
+	bool posix_kill ( int $pid , int $sig )	向进程id为$pid的进程发送$sig信号
+	pcntl_waitpid ( int $pid ,$status )  	会挂起当前进程，直到子进程退出，如果子进程在调用此函数之前就已退出，此函数会立刻返回。子进程使用的资源将被释放。
+		pcntl_wait($status, WNOHANG);
+	共享内存
+		$shmKey = 123;
+		//创建共享内存段
+		$shmId = shmop_open($shmKey, 'c', 0777, 64);
+		shmop_write($shmId, $num, 0);
+		$num = shmop_read($shmId, 0, 64);
+
+	管道
+		posix_mkfifo($sPipePath, 0666)；		创建管道
+序列化
+	serialize()
+	unserialize()
+
+系统
+	call_user_func_array(fun(),['a','b'])	调用其他方法 参数2 为 对应其他方法的参数数组
+	sys_get_temp_dir()			获取php缓存文件夹目录
+	set_time_limit(0);			设置脚本持续时间

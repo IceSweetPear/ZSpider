@@ -1,0 +1,113 @@
+binds[									一个数组 键为名称  值为 回调方法
+	superman=>function($container, $moduleName) {				
+    		return new Superman($container->make($moduleName));
+	}
+	xpower=>function($container) {
+    		return new XPower;
+	}
+	bomb=>function($container) {
+    		return new UltraBomb;
+	}
+]
+									一个数组 键为名称  值为 实例
+instances[
+
+]
+
+
+$container = new Container;
+
+// 向该 超级工厂添加超人的生产脚本
+$container->bind('superman', function($container, $moduleName) {
+    return new Superman($container->make($moduleName));
+});
+
+// 向该 超级工厂添加超能力模组的生产脚本
+$container->bind('xpower', function($container) {
+    return new XPower;
+});
+
+// 同上
+$container->bind('ultrabomb', function($container) {
+    return new UltraBomb;
+});
+
+										以上配置了 超人 和 超能力的生产 脚本（方式/设计图）
+										一下开始生产
+										
+
+
+$superman_1 = $container->make('superman', 'xpower');					开始生产超人 make 第一个参数为 生产的 超人 第二个 超人的构造函数参数 （要携带的超能力）
+
+
+
+
+
+	array_unshift($parameters, $this);						进入make方法     array_unshift 方法 将 容器本身     加入到    make   的第二个参数 数组中
+		$parameters =  [$container ,  'xpower']						第二个参数 数组  为 [$container ,  'xpower']
+
+	return call_user_func_array($this->binds['superman'], [$container ,  'xpower']);		运行 绑定的 闭包函数 传递对应参数  返回闭包返回值
+	
+$superman_1  = function($container, xpower) {						
+   		 return new Superman($container->make( xpower));			$superman_1 = new Superman($container->make( xpower));
+	          }									创建好了 超人 
+
+
+
+
+
+
+	new Superman($container->make( xpower)); 					参数进入 make 方法
+		
+		 make(xpower, [])							
+		 array_unshift([], $this);				
+			
+		return call_user_func_array($this->binds[xpower], [$this])			运行 绑定的 闭包函数 传递对应参数
+
+		return xpower=>function($container) {					
+    			return new XPower;						返回闭包返回值
+		           }
+		
+	$superman_1  = new Superman(new XPower)					最终效果
+
+
+
+
+
+
+	bind 两个参数 第一个为 名 第二个为 回调函数
+
+	如果 第二个参数 是回调函数 那么 把他 存放在 binds[] 中 否则 存放在 实例 instances 中
+
+	make第一个参数 为 名称   第二个参数为 要执行回调函数 的 参数 默认为空
+
+	如果 这个名称 存在 实例 中  那么就直接返回 
+
+	否则  就 运行 这个名称 在 binds 中 保存的 回调函数  这个回调函数的参数为 make 的第二个参数 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+	
+

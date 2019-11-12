@@ -1,0 +1,29 @@
+
+布局
+	顶部 侧边栏 采用 固定 定位   
+
+	中间 占满 margin 出 顶部 侧边栏的 位置  iframe  在中间 
+
+菜单权限
+	
+	在获取菜单列表的 时候 根据当前登录用户的 权限 构造 菜单列表
+
+	访问 url 的时候 也对 权限 进行验证
+	
+iframe
+
+	1，使用 pjax 更换 当前 地址栏 url 而不刷新
+
+	ifram 的 路径随着 当前路径改变
+
+	2，当前路径 不变  菜单栏不跳转  url保存在 data-value 里面 或者 拦截 a
+	
+	点击菜单的时候 js 获取  url 替换 iframe	
+                   
+	<iframe src="{$fixedmenu.url}?addtabs=1" width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling-x="no" scrolling-y="auto" allowtransparency="yes"></iframe>
+
+	在 目标页面 使用的接口 获取数据
+
+	在模块中 访问了两次 action  一次 返回 模板  一次 模板中 请求了 ajax
+
+

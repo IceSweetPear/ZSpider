@@ -1,0 +1,41 @@
+查指定院校介绍  zizheng_0418_add_school_api
+
+sendSeccess(['content'=>['zzz']])
+
+变量命名为驼峰
+
+找不到资源返回NoFound
+
+找不到资源就分页会出问题 加 isEmpty
+
+if不要包裹太大 可以封装一下
+
+@json_decode();  加抑制符
+
+cursor()数据量过大用游标
+
+for循环中 保存的数组 太大 可以 块处理
+if count ids[] >100 clear()
+
+for循环 之前 查不到会报错 加为空判断 
+
+for循环 内 要查询 也要判断 if empty continue
+
+不一样的工作 要换新分支
+
+尽量用 array_get 的 default 解决问题
+
+orwhere  写在 where 的回调方法中
+
+数据处理 从顶部处理
+
+能少个变量就少个变量
+
+网页的html可以复制
+
+0 在 empty 和 when 为空 
+
+少说话！
+
+数据表 一对多  要 新加表 多层级   不然新加字段 每条数据 都要加
+

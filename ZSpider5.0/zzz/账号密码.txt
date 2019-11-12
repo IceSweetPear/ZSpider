@@ -1,0 +1,11 @@
+106.13.45.220 	api.xuezhangbb.com
+帐号：zhangzizheng@xuezhangbb.com 密码:xuezhangbb
+
+http://www.xuezhangbb.com/wechat/login?debug=xuezhangbb&user_id=1
+模拟用户退出
+
+id=73459
+
+ssh root@106.13.45.220
+
+zizheng@172.23.42.218
