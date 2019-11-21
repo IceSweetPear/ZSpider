@@ -12,7 +12,6 @@
 Cookie
 	setcookie("user", "runoob", time()+3600);
 
-
 字符串
 	ord() 			返回字符串首个字母的ASCLL编码
 	chr() 			传入ASSCLL编码返回字符
@@ -51,6 +50,9 @@ Cookie
 	mb_strlen()		返回指定编码字符串长度
 	str_split()			分割字符串为数组
 	uniqid() 			生成唯一id
+	preg_match('/\d{2,3}/', $value, $match);		正则匹配一次
+	preg_match_all('/\d{2,3}/', $value, $match);	正则匹配所有
+	preg_replace("/0/","",$str);			正则替换
 
 数组	
 	array_values()		获取数组的所有值  （重置索引）
@@ -69,8 +71,11 @@ Cookie
 	array_search() 		搜索值 返回第一次搜到的 键
 	array_reverse()		反转
 	array_slice() 		函数在数组中根据条件取出一段值，并返回。 
-	range（）			创建一个函数 开始值 结束值 步长
+	range()			创建一个函数 开始值 结束值 步长
 	array_sum()		数组中所有值相加
+
+功能
+	header()			返回浏览器一些信息
 	
 文件
 	上传
@@ -90,28 +95,44 @@ Cookie
 
 		
 文件控制
-	file_get_content('./text') 		读取文件中所有内容
+	
 	file_put_contents($file, $content)	填充文件
-	$f = fopen("webdictionary.txt", "r") 	打开文件 跟多模式选择 没有则创建
-	feof($f) 				函数检查是否已到达 "end-of-file" (EOF)。	while(!feof($f))
-	fread($f,400) 			的第一个参数包含待读取文件的文件名，第二个参数规定待读取的最大字节数。
-	fgets($f) 				函数用于从文件读取单行。
 
+	
+   打开关闭			
+	$f = fopen("webdictionary.txt", "r") 	打开文件 跟多模式选择 没有则创建
+	fclose(f)
+
+	opendir()：			打开目录句柄
+	closedir()
+
+   写入
 	file_put_contents($filename, $data) 	向文件写入内容
 	fwrite($f, 'world');
 
-	unlink($filename);			删除文件
-	rmdir($dir);			删除文件夹
+   读取
+	file_get_content('./text') 		读取文件中所有内容
+	fgets($f) 				函数用于从文件读取单行。
+
+	fread($f,400) 			的第一个参数包含待读取文件的文件名，第二个参数规定待读取的最大字节数。
 	
+	readdir(handle)			返回选择文件夹句柄的下一个文件
+   判断	
 	file_exists(文件);  			判断是否存在	
 	is_file($filename) 			判断是不是一个文件
 	is_writeable($filename)		可写
 	is_readable($filename)		可读
 
+	feof($f) 				函数检查是否已到达 "end-of-file" (EOF)。	while(!feof($f))
+   操作
 	filectime($f) 			创建时间
 	filemtime()   			修改时间
 	fileatime()   			访问时间
 
+	unlink($filename);			删除文件
+
+	rmdir($dir);			删除文件夹
+   信息
 	filesize($filename); 			字节
 
 Redis
@@ -150,3 +171,45 @@ Redis
 	call_user_func_array(fun(),['a','b'])	调用其他方法 参数2 为 对应其他方法的参数数组
 	sys_get_temp_dir()			获取php缓存文件夹目录
 	set_time_limit(0);			设置脚本持续时间
+	ini_set('display_errors', 0)		屏蔽报错
+	error_reporting(0)			屏蔽报错
+
+插件
+	ZipArchive   文件压缩
+		        $zip = new ZipArchive();
+		        $zip->open($filename,ZIPARCHIVE::CREATE);
+		        foreach ($pathArray as $pathInfo){
+		            $zip->addFile($pathInfo, basename($pathInfo));
+		        }
+		        $zip->close();
+
+操作
+	浏览器文件下载
+	            $filesize = filesize($full_path);
+	            header("Content-Type:octet/stream");
+	            header("Accept-Range:bytes");
+	            header("Content-Length:$filesize");
+	            header("Content-Disposition:attchment;filename=$file_name");
+	
+	            $file = fopen($full_path, 'r');
+	            $buffer = 1024;//
+	            while (!feof($file)) {
+	                $file_data = fread($file, $buffer);
+	                echo $file_data;
+	            }
+	            fclose($file);
+
+	下载超大文件
+	        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+	        curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch ,$str){
+	            fwrite($this->file, $str);
+	            strlen($str);
+	        });
+	        $result = curl_exec($ch);
+	
+	        curl_setopt($ch, CURLOPT_RANGE, $start . '-' . $end);		分片下载
+	      
+
+
+
+
