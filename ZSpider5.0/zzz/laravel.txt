@@ -26,7 +26,11 @@ Artisan指令
 
 	artisan admin:make UserController --model=App\\User
 
-	php artisan queue:work --queue=high,default,low				执行计划
+	php artisan queue:work --queue=high,default,low		执行计划
+
+	php artisan key:generate
+
+	php artisan passport:keys				生成 auth key
 
 
 路由
@@ -39,6 +43,29 @@ Artisan指令
   			Route::get('user/profile', function () {
 			});
 		});
+		Route::group( function () {
+    			Route::get('/', function (){	
+  			 });
+  			Route::get('user/profile', function () {
+			});
+		});
+		Route::middleware(['first', 'second'])->group( function () {
+    			Route::get('/', function (){	
+  			 });
+  			Route::get('user/profile', function () {
+			});
+		});
+	路由前缀
+		Route::prefix('admin')				直接写
+		Route::group(['prefix' => 'news'], function () {}		写在group中
+	路由模型绑定
+		Route::get('api/users/{user}', function (App\User $user) {		当匹配路由名和model变量名一致 可直接获取 匹配不到返回404
+		    return $user->email;
+		});
+		public function getRouteKeyName(){				可在model 中定义其他字段
+		    return 'slug';
+		}
+
 	route('web.news')		根据route名生成url
 
 控制器
@@ -121,6 +148,7 @@ Artisan指令
 		  -> flatten()	将多维度的集合变成一维的 只保留值
 		  -> slice(4, 2);	从4开始切割2个
 		  -> groupBy()	分组
+		  -> unique()	去重
 	查询		
 		  -> all()		返回底层数组
 		  -> contains()	判断集合是否包含一个给定项  一个参数为值 两个参数为键值对
@@ -233,6 +261,14 @@ Artisan指令
 		->inRandomOrder()				随机排序
 
 ORM模型
+
+	查询
+		->find();
+		->get();
+		->first();
+		->firstOrCreate()
+			->wasRecentlyCreated				判断是否新建
+
 	$users = User::with('post')->get()				直接将关联模型加载			加载附表
 
 	$users = User::with(['posts' => function ($query) {			关联模型 条件判断			筛选 满足附表的主表数据  加载附表
@@ -267,10 +303,35 @@ ORM模型
 
 	->select(\DB::raw('min(id) AS id'))				分组 聚合查询
             	->groupBy('province')
+
+	->increment('download');					自增
+	->decrement('votes');					自减
 	
 	->toArray()
 	->toJson()
 	
+	->disableCache()						不加入缓存
+
+	全局作用域
+		protected static function boot(){				设置全局作用域
+		        parent::boot();
+		        static::addGlobalScope('age', function (Builder $builder) {
+		            $builder->where('age', '>', 200);
+ 		        });
+		}
+		
+		User::withoutGlobalScope('age')->get();
+	本地作用域
+		public function scopePopular($query){		在model中定义本地作用域 加scope前缀
+		        return $query->where('votes', '>', 100);
+		}
+
+		User::popular()->active()->first();		使用本地作用域
+		
+资源
+
+	ShopOrderResource::collection($ShopProductOrder)->toResponse(request())->original		分页数据资源
+
 Helper函数
 	数组函数
 		array_add()	添加给定键值对到数组，如果给定键不存在的话    array_add(['name' => 'Desk'], 'price', 100);
@@ -413,14 +474,14 @@ laravel-admin
 		$column->row('111');
 		$column->row('222');
 	});
-模型表格
+表格
 	$grid = new Grid(new Movie);			使用model 创建一个表格
 
 	$grid->column('id', 'ID')			添加 id字段 标题为 ID  
 
 	$grid->username('用户名');			添加 username字段 标题为 用户名 
 
-列回调函数
+   列回调函数
 	$grid->column('id', 'ID')->display(function($userId) {			标题回调
 		return User::find($userId)->name;
 	});
@@ -433,8 +494,7 @@ laravel-admin
 		return 'http://localhost/images/'. $path;
 	})
 
-
-模型表格数据
+  数据条件
 	$grid->model()->where('id', '>', 100);
 	
 	$grid->model()->orderBy('id', 'desc');
@@ -443,7 +503,7 @@ laravel-admin
 
 	$grid->paginate(15);
 
-禁用功能
+   禁用功能
 	$grid->disableCreateButton();		禁用创建按钮
 	
 	$grid->disablePagination();		禁用分页条
@@ -460,7 +520,7 @@ laravel-admin
 
 	$grid->perPages([10, 20, 30, 40, 50]);	设置分页选择器选项
 
-列属性
+   列属性
 	$grid->column('title')->setAttributes(['style' => 'color:red;']);
 	
 	->style('max-width:200px;word-break:break-all;');
@@ -472,7 +532,6 @@ laravel-admin
 	->hide();
 
 	->sortable();
-
 
 	->filesize();		文件大小转为 11Mb
 	
@@ -506,7 +565,7 @@ laravel-admin
 
 	->loading([1, 2, 3]);		值为之一 显示等待
 
-	->carousel($width = 300, int $height = 200, $server);		值为图片数组 展示 图片轮播
+	->carousel($width = 300, int $height = 200, $server);			值为图片数组 展示 图片轮播
 
 	->date('Y-m-d');		时间格式化
 
@@ -523,13 +582,125 @@ laravel-admin
 		3 => 'primary',
 		4 => 'success',
 	  ], 'warning');
-		
-列格式
-	$grid->column('images')->images();
+   筛选条件
+	$grid->filter(function ($filter) {
+		$filter->equal('column', $label);
+		$filter->between('updated_at')->datetime();
+		$filter->like('title', 标题);
+		$filter->where(function ($query) {
+    			$query->where('title', 'like', "%{$this->input}%")
+		}, '标题');
+	});
+      输入样式
+	->integer();
+	->select(['key' => 'value'...]);
+   增加按钮
+	$grid->tools(function ($tools) {
+	            $tools->append(new ShopProductOrderDownLoad());
+        	});
+      自定义工具
+	class *** extends AbstractTool
+	function script()
+	function render()
 
+Form表单
+	$form = new Form(new Movie);
+	
+	->display('id', 'ID');			显示记录id
+	
+	->text('title', '电影标题');		添加text类型的input框
 
+		$directors = [
+		    1 => 'John',
+		    2 => 'Smith',
+		    3 => 'Kate' ,
+		];
 
+	->select('director', '导演')->options($directors);
 
+	->textarea('describe', '简介');		添加describe的textarea输入框
+
+	->number('rate', '打分');		数字输入框
+
+	->switch('released', '发布？');		添加开关操作
+
+	->dateTime('release_at', '发布时间');	添加日期时间选择框
+
+	->display('created_at', '创建时间');	时间显示
+
+	$form->ignore(['column1', 'column2', 'column3']); 	忽略掉不保存的字段
+
+   操作工具
+	$form->tools(function (Form\Tools $tools) {
+	    $tools->disableList();		去掉`列表`按钮
+
+	    $tools->disableDelete();		去掉`删除`按钮
+
+	    $tools->disableView();		去掉`查看`按钮
+	});
+
+	$form->footer(function ($footer) {
+
+	    $footer->disableReset();		去掉`重置`按钮
+
+	    $footer->disableSubmit();		去掉`提交`按钮
+
+	    $footer->disableViewCheck();	去掉`查看`checkbox
+
+	    $footer->disableEditingCheck();	去掉`继续编辑`checkbox
+
+	    $footer->disableCreatingCheck();	去掉`继续创建`checkbox
+
+	});
+
+	$form->disableReset();		去掉`重置`按钮
+	
+	$form->disableSubmit();		去掉`提交`按钮
+	
+   数据
+	$form->ignore(['column1', 'column2', 'column3']);	忽略掉不需要保存的字段
+
+	$form->isCreating();
+
+	$form->isUpdating()
+
+	$form->text('title')->value('text...');			设置保存值
+
+	$form->text('title')->default('text...');			设置默认值
+
+	$form->text('title')->attribute('data-title', 'title...');		设置属性
+
+	$form->text('title')->placeholder('请输入。。。');		设置placeholder
+
+	$form->text('title')->required();			设置必填
+
+	$form->text('title')->pattern('[A-z]{3}');			设置规范
+
+	$form->text('title')->readonly();			设置只读
+	
+	$form->text('title')->disable();				设置不可编辑
+	
+	$form->text('title')->autofocus();			自动获取焦点
+
+	$form->fieldset('用户信息', function (Form $form) {		表单分组
+	    $form->text('username');
+	    $form->email('email');
+	});
+   验证
+	$form->text('title')->rules('required|min:3');
+	
+	$form->text('code')->rules('required|regex:/^\d+$/|min:10', [
+	    'regex' => 'code必须全部为数字',
+	    'min'   => 'code不能少于10个字符',
+	]);
+   布局
+	$form->column(1/2, function ($form) {
+		$form->text();
+	});
+
+	$form->column(1/6, function ($form) {
+		$form->text();
+	});
 
 
 

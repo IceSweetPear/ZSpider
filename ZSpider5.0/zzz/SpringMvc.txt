@@ -1,0 +1,10 @@
+安装配置
+	1，下载安装
+		下载 java jdk1.8  Tomcat8.0 Eclipse EE  
+		需要新的环境变量  JAVA_HOME 为 java 安装目录  CATALINA_HOME 为 tomcat安装目录  环境变量path中添加 JAVA_HOME  下的bin CATALINA_HOME 下的 bin  lib
+ 
+	2,   搭建环境
+		新建一个 动态web项目  （如果没有新建动态项目选项 help->install new software  安装 Web, XML, Java EE and OSGi Enterprise Development 重启就可以了）
+		新建项目 选择 tomcat服务器如果找不到服务器 就点击 windows->Preferences->Server->Runtime Environments ->add 添加 Tomcat服务器
+		（此处可能 不支持 Tomcat 8服务器需要   Help->eclipse marketplace ->find Eclipse JST Server Adapters->install 安装成功就好了）
+		（如果你安装的 8.5的服务器 不支持 则需要  去 Tomcat安装目录 lib 下面 找到 catalina.jar 使用压缩工具打开 ）

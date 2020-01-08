@@ -17,6 +17,7 @@ Git命令
 	git log		 	查看日志
 	git reflog		 	查看提交日志
 	git reset --hard xxx	 	回退到指定版本
+	$ git reset --hard origin/master
 
 	git checkout 	 	分支名	切换分支
 	git checkout -b		创建一个分支 并切换
@@ -46,7 +47,7 @@ Git命令
 	
 	git config --global credential.helper store	记录账号密码
 
-
+	git checkout -b fenzhi001 origin/fenzhi001	从远程分支 创建分支
 
 	   mkdir：         XX (创建一个空目录 XX指目录名) 
    pwd：          显示当前目录的路径。 

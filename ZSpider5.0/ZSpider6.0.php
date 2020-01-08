@@ -1,15 +1,14 @@
 <?php
 
-
 $configs = [
     'gkw1' => [
-        'task' => 4,
-        'start' => 'http://www.uu234.cc/xuanhuan/',
+        'task' => 0,
+        'start' => 'https://www.xuu234.com/xuanhuan/',
         '%pageList' => [
             'name' => 'pageList',
             'home' => '',
             'urlSub' => '</a><a href="@" class="next" title="下一页">',
-            'page' => true,
+            'page' => 10,
             'data' => [
                 'page' => function ($pageInfo) {
                 },
@@ -30,27 +29,8 @@ $configs = [
                     'home' => '',
                     'data' => [
                         'page' => function ($pageInfo) {
-
-                            $html = $pageInfo['html'];
-
-                            $title = str_substr('<title>', 'txt下载_全集下载', $html, true);
-
-                            $downLoadLink = first(preg_sub_url($html, '#http://down.uu234.cc/txt/(.*)#'));
-
-                            if (empty($downLoadLink)) {
-                                return;
-                            }
-
-                            print_r($title."\n");
-
-                            $newFile = 'xs/' . $title;
-
-                            $file = httpcopy($downLoadLink, $newFile);
-
-                            $fileType = str_substr('/', ';', get_file_mini_type($file), true);
-
-                            rename($newFile, $file . '.' . $fileType);
-
+                            print_r($pageInfo['url']);
+                            exit("ccc");
                         },
                     ],
                 ],
@@ -153,6 +133,66 @@ class ZRedis
 
 }
 
+class ZArray{
+    public static $array;
+
+    public static function show(){
+        return self::$array;
+    }
+
+    public static function init(){
+        self::$array = [];
+    }
+
+    public static function get($key){
+        return self::$array[$key];
+    }
+
+    public static function put($key, $value){
+        self::$array[$key] = $value;
+    }
+
+    public static function lpush($key, $value){
+        return array_unshift(self::$array[$key], $value);
+    }
+
+    public static function rpush($key, $value){
+        self::$array[$key][] = $value;
+    }
+
+    public static function lpop($key){
+        return array_shift(self::$array[$key]);
+    }
+
+    public static function rpop($key){
+        return array_pop(self::$array[$key]);
+    }
+
+    public static function delete($key){
+        unset(self::$array[$key]);
+    }
+}
+
+class ZCache{
+
+    public static $cache;
+
+    public static function init($cache){
+        $cacheList = [
+          'redis' => 'ZRedis',
+          'array' => 'ZArray',
+        ];
+        self::$cache = array_get($cacheList, $cache, $cacheList['array']);
+
+        self::$cache::init();
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        return call_user_func_array(self::$cache . "::$name", $arguments);
+    }
+}
+
 class ZSpider
 {
     public $taskDraw;
@@ -195,16 +235,21 @@ class ZSpider
                 $html = curlGetHtml($url);
             }
 
-//            print_r([$name => $url]);
+            print_r([$name => $url]);
 
             $pageData = dataFun($data, ['url' => $url, 'html' => $html]);
             fetchFun(array_get($this->on_fetch, $name), $pageData);
 
+            $nowPage = 1;
             if ($page) {
-
-                ZRedis::rpush('data_queue', ['urlList' => [$url], 'task_name' => first($childTasks)['name']]);
+                ZCache::rpush('data_queue', ['urlList' => [$url], 'task_name' => first($childTasks)['name']]);
 
                 while ($html) {
+                    $nowPage++;
+                    if (is_numeric($page) && $nowPage >= $page){
+                        break;
+                    }
+
                     $pageUrl = getUrlList($html, $urlSub);
 
                     if (empty($pageUrl)) {
@@ -213,15 +258,14 @@ class ZSpider
 
                     $pageUrl = $home . first($pageUrl);
 
-                    ZRedis::rpush('data_queue', ['urlList' => [$pageUrl], 'task_name' => first($childTasks)['name']]);
+                    ZCache::rpush('data_queue', ['urlList' => [$pageUrl], 'task_name' => first($childTasks)['name']]);
 
                     $html = getHtml($pageUrl);
 
-                    print_r(['pid' => posix_getpid(), 'page' => $pageUrl, 'llen' => ZRedis::$redis->llen('data_queue')]);
+                    print_r(['pageUrl' => $pageUrl, 'page' => $nowPage]);
                 }
 
                 return;
-
             } else {
                 $childUrlList = getUrlList($html, $urlSub);
                 $childUrlList = $home ? addUrlHome($childUrlList, $home, $url) : $childUrlList;
@@ -246,7 +290,7 @@ class ZSpider
 
                 $childTaskName = $childTask['name'];
 
-                ZRedis::rpush('data_queue', ['urlList' => $childUrlList, 'task_name' => $childTaskName]);
+                ZCache::rpush('data_queue', ['urlList' => $childUrlList, 'task_name' => $childTaskName]);
 
             }
 
@@ -256,7 +300,7 @@ class ZSpider
 
     public function start($configs)
     {
-        ZRedis::init();
+        ZCache::init('array');
 
         foreach ($configs as $configName => $config) {
 
@@ -267,43 +311,62 @@ class ZSpider
 
             $childTaskName = $taskContainer['name'];
 
-            ZRedis::delete('data_queue');
-            ZRedis::rpush('data_queue', ['urlList' => [$config['start']], 'task_name' => $childTaskName]);
+            ZCache::delete('data_queue');
+            ZCache::rpush('data_queue', ['urlList' => [$config['start']], 'task_name' => $childTaskName]);
 
+            $task = array_get($config, 'task', 0);
             $index = 0;
-            while ($index < array_get($config, 'task', 1)) {
-                $index++;
-                $pid = pcntl_fork();
-                if ($pid == -1) {
-                } elseif ($pid > 0) {
-                    pcntl_wait($status, WNOHANG);
-                } elseif ($pid == 0) {
+            if ($task <= 1){
+                $sleepCount = 5;
+                while (true) {
+                    $dataQueue = ZCache::lpop('data_queue');
 
+                    if (empty($dataQueue)) {
+                        sleep(3);
+                        echo "sleep---$sleepCount\n";
+                        $sleepCount--;
+                        if ($sleepCount < 0) {
+                            break;
+                        }
+                        continue;
+                    }
                     $sleepCount = 3;
 
-                    while (true) {
-                        $dataQueue = ZRedis::lpop('data_queue');
+                    $taskName = $dataQueue['task_name'];
+                    $taskData = $dataQueue['urlList'];
 
-                        if (empty($dataQueue)) {
-                            sleep(2);
-                            echo posix_getpid() . "sleep\n";
-                            $sleepCount--;
-                            if ($sleepCount < 0) {
-                                break;
-                            }
-                            continue;
-                        }
+                    $this->doTask($this->taskDraw[$taskName], $taskData);
+                }
+            }else{
+                while ($index < array_get($config, 'task', 1)) {
+                    $index++;
+                    $pid = pcntl_fork();
+                    if ($pid == -1) {
+                    } elseif ($pid > 0) {
+                        pcntl_wait($status, WNOHANG);
+                    } elseif ($pid == 0) {
                         $sleepCount = 3;
+                        while (true) {
+                            $dataQueue = ZCache::lpop('data_queue');
 
-                        print_r([posix_getpid() => $dataQueue]);
+                            if (empty($dataQueue)) {
+                                sleep(2);
+                                echo posix_getpid() . "---sleep---$sleepCount\n";
+                                $sleepCount--;
+                                if ($sleepCount < 0) {
+                                    break;
+                                }
+                                continue;
+                            }
+                            $sleepCount = 3;
 
-                        $taskName = $dataQueue['task_name'];
-                        $taskData = $dataQueue['urlList'];
+                            $taskName = $dataQueue['task_name'];
+                            $taskData = $dataQueue['urlList'];
 
-                        $this->doTask($this->taskDraw[$taskName], $taskData);
+                            $this->doTask($this->taskDraw[$taskName], $taskData);
+                        }
+                        exit();
                     }
-
-                    exit();
                 }
             }
         }

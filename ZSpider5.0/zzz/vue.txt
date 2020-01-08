@@ -82,7 +82,42 @@ VUE
    组件通信
 	props		使用 props 来接收插槽承载的父组件的数据
 	
-	事件抛出		在插槽上定义 自定义事件 v-on:cbclick="bclick"  在子组件内部使用 $emit() 调用 自定义事件 访问 父组件方法
+	事件抛出		在插槽上定义 自定义事件 v-on:cbclick="bclick"  在子组件内部使用 $emit() 调用 自定义事件 访问 父组件方法	
+
+   全局组件注册
+	Vue.component('my-component-name', {
+	  // ... 选项 ...
+	})
+   局部组件注册
+	var ComponentA = { /* ... */ }
+	var ComponentB = { /* ... */ }	
+
+	new Vue({
+	  el: '#app',
+	  components: {
+	    'component-a': ComponentA,
+	    'component-b': ComponentB
+	  }
+	})	
+   全局组件引用
+	<component-c></component-c>	直接在template 中 引入其他组件
+   局部组件引用
+	components:{
+	      'component-b' : ComponentB,
+	},
+	<component-b></component-b>	先使用 components 将其他子组件引入进来  再在模板中引入
+
+插槽
+	<slot name="header"></slot>
+	可以将插板 里的 内容 保留在 组件模板中  保留插板中的 元素 可以 设置 name值 叫 具名插槽
+
+动态组件
+	<component v-bind:is="currentTabComponent"></component>
+	也就是 为 一个 插板 准备了 多个组件   通过 v-bind:is 来 改变 插板本身名字 来对应 不同的 组件
+	<keep-alive>
+  		<component v-bind:is="currentTabComponent"></component>
+	</keep-alive>
+	<keep-alive> 包围 插板 使得 上一次的 组件 被缓存起来
 	
 
 组件库
@@ -168,6 +203,9 @@ v-model
 Vue 能干什么？
 
 	vue的局部刷新很好  先不说 以后脚手架什么的 单是现在 配合 layui  
+
+动态组件
+	也就是 为 一个 插板 准备了 多个组件   通过 v-bind:is 来 改变 插板本身名字 来对应 不同的 组件
 
 
 

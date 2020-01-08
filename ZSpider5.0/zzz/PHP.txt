@@ -63,6 +63,7 @@ Cookie
 	array_column()		从多维数组中 的 子数组 指定的键 生成新数组  （指定多维数组，子数组键，用子数组的某个键作为新数组的键）
 	array_merge() 		合并数组 会将相同的键名覆盖
 	array_merge_recursive()  	合并数组  不会进行键名覆盖，而是将多个相同键名的值递归组成一个数组
+	array_combine() 		通过合并两个数组来创建一个新数组，其中的一个数组元素为键名，另一个数组元素为键值：
 	sort()    			函数对索引数组进行降序排序	
 	rsort()  			函数对索引数组进行降序排序	
 	krsort() 			函数对关联数组按照键名进行降序排序
@@ -81,31 +82,20 @@ Cookie
 	上传
 		enctype="multipart/form-data">
 	操作
-		move_uploaded_file($up_info['tmp_name'][$i],$ob_path.'/'.$new_name)  	移动文件
-
-		fopen			打开文件 获得文件句柄
-		feof() 			判断有没有到达文件末尾
-	读取
-		get_file_content		读取文件所有内容
-		fgets			读取一行内容
-		fgetcsv()			读取csv文件 一行 逗号分隔为数组
-	
-	文件夹
-		scandir()			扫描一个目录下的所有文件
-
+		move_uploaded_file($up_info['tmp_name'][$i],$ob_path.'/'.$new_name) 
+	引入
+		include()  		把文件包含过来 警告
+		require()  		把文件包含过来 致命错误
+		require_once($file);
 		
 文件控制
-	
-	file_put_contents($file, $content)	填充文件
 
-	
    打开关闭			
 	$f = fopen("webdictionary.txt", "r") 	打开文件 跟多模式选择 没有则创建
 	fclose(f)
 
 	opendir()：			打开目录句柄
 	closedir()
-
    写入
 	file_put_contents($filename, $data) 	向文件写入内容
 	fwrite($f, 'world');
@@ -117,6 +107,8 @@ Cookie
 	fread($f,400) 			的第一个参数包含待读取文件的文件名，第二个参数规定待读取的最大字节数。
 	
 	readdir(handle)			返回选择文件夹句柄的下一个文件
+
+	scandir()				读取文件夹下所有文件
    判断	
 	file_exists(文件);  			判断是否存在	
 	is_file($filename) 			判断是不是一个文件
@@ -132,8 +124,14 @@ Cookie
 	unlink($filename);			删除文件
 
 	rmdir($dir);			删除文件夹
+
+	move_uploaded_file	(from,to)		移动文件
    信息
 	filesize($filename); 			字节
+
+
+高级函数
+	call_user_func_array(func_name, parmeArr);	调用一个函数 数组作为参数	
 
 Redis
 	$redis->set($key, $value);
@@ -173,7 +171,8 @@ Redis
 	set_time_limit(0);			设置脚本持续时间
 	ini_set('display_errors', 0)		屏蔽报错
 	error_reporting(0)			屏蔽报错
-
+	date_default_timezone_set("PRC");  	设置时区
+	microtime(true);			获取程序运行时间
 插件
 	ZipArchive   文件压缩
 		        $zip = new ZipArchive();

@@ -1,0 +1,23 @@
+Redis
+
+增加
+
+	set key value [EX 秒值]/[PX 毫秒值][NX]		存储一个字符串  设置NX 只有 key 不存在的时候才存储
+
+	append key value				向指定键追加字符串
+
+	incrby key increment			向数字型的value 加 一个值 
+
+
+获取	
+	get key					获取与键 key 相关联的字符串值。
+	
+	strlen key					获取指定key字符串的长度
+
+查看
+	key *					查看所有键
+
+删除
+	flushall					删除所有
+
+	del key 					删除指定键

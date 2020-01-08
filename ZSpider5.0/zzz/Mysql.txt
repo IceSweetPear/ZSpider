@@ -1,0 +1,50 @@
+登录MySQL数据库
+	mysql -uroot –p 
+
+显示所有的数据库
+	show databases;
+
+创建数据库
+	create database mydatabase;
+
+删除数据库
+	drop database mydatabase;
+
+打开数据库
+	use mydatabase;
+
+查看数据表
+	show tables;
+
+创建数据表
+	create table <表名> ( <字段名1> <类型1> [,..<字段名n> <类型n>]);
+
+查看数据库表结构
+	desc <表名>;
+
+在表中插入记录
+	insert into student values(1,' joan ',0, 89.2);
+
+查询表中的记录
+	select id,name,sex,degree from student;
+
+删除数据表
+	drop table <表名>;
+
+导出数据库文件
+	mysqldump –u root –p mydatabase[数据表] > mydatabase_out.sql;
+	mysqldump -u dbuser -p -d --add-drop-table dbname >d:/dbname_db.sql
+
+导入数据库文件
+	mysql>use 数据库
+	mysql>source d:/dbname.sql
+
+Linux Mysql 开机自启动
+	1、cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql   将服务文件拷贝到init.d下，并重命名为mysql
+	2、chmod +x /etc/init.d/mysql    赋予可执行权限
+	3、chkconfig --add mysql        添加服务
+	4、chkconfig --list             显示服务列表
+	5、chkconfig --level 345 mysql on
+	6、reboot重启电脑
+	7、netstat -na | grep 3306，如果看到有监听说明服务启动了
+

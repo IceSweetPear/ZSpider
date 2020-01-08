@@ -25,14 +25,14 @@ foreach 替换
 	foreach($list as &$item){
 		$item = strtoupper($item)
 	}
-
+foreach 过滤
+	foreach ($arr as $k=>$a){
+            		if ($a%2 == 0){
+                		unset($arr[$k]);
+            		}
+	}
 递归爬虫
 	doTask('设计图'， urlList)
 	构造一个层级设计图  每个任务 根据 urlList 中的每个url 去生成 UrlList 
 	并获取自己的设计图去调用这个UrlList
-	
-双参数取消
-	传参数 123 想取消 3  传 1233 获取 重复的值 删除  
-	此操作 想删除一个 参数 但是不加删除的方法  而是  再次传过来 判断重复删除
-
 
