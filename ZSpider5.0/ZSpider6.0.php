@@ -2,6 +2,7 @@
 
 $configs = [
     'gkw1' => [
+        'cache' => 'array',
         'task' => 0,
         'start' => 'https://www.xuu234.com/xuanhuan/',
         '%pageList' => [
@@ -300,8 +301,6 @@ class ZSpider
 
     public function start($configs)
     {
-        ZCache::init('array');
-
         foreach ($configs as $configName => $config) {
 
             $this->getTaskDraw($config);
@@ -310,6 +309,8 @@ class ZSpider
             $taskContainer = first($taskContainers);
 
             $childTaskName = $taskContainer['name'];
+
+            ZCache::init($config['cache']);
 
             ZCache::delete('data_queue');
             ZCache::rpush('data_queue', ['urlList' => [$config['start']], 'task_name' => $childTaskName]);
