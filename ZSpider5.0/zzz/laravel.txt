@@ -2,11 +2,11 @@
 Artisan指令
 	artisan 						查看所有指令
 
-	artisan make:model Flight				注册model
+	artisan make:controller FileName/IndexController		生成控制器
 
 	artisan make:resource User				生成资源类
 
-	artisan make:controller FileName/IndexController
+	artisan make:model Flight				注册model
 	
 	artisan make:middleware MiddlewareName
 
@@ -113,6 +113,9 @@ Artisan指令
 		$port = $request->getPort();	获取请求的端口
 			
     	}
+
+	http_build_query(['a'=>1]);		数组转请求参数
+	parse_str(a=1,$arr);			请求参数转数组
 响应
 	return response($content)		返回响应内容  设置响应头 设置响应cookie
                 ->header('Content-Type', $type)
@@ -320,7 +323,7 @@ ORM模型
  		        });
 		}
 		
-		User::withoutGlobalScope('age')->get();
+		User::withoutGlobalScope('age')->get();		移除全局作用域
 	本地作用域
 		public function scopePopular($query){		在model中定义本地作用域 加scope前缀
 		        return $query->where('votes', '>', 100);
@@ -658,7 +661,7 @@ Form表单
 	$form->disableSubmit();		去掉`提交`按钮
 	
    数据
-	$form->ignore(['column1', 'column2', 'column3']);	忽略掉不需要保存的字段
+	$form->ignore(['column1', 'column2', 'column3']);	忽略掉不需要保存的字段  request() 可以获取到忽略的数据
 
 	$form->isCreating();
 
