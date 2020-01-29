@@ -1,14 +1,23 @@
 ﻿<?php
 
+print sys_get_temp_dir();
+
+!function_exists('pcntl_signal') ?: pcntl_signal(SIGINT,  'exitSignHandler');
+
+function exitSignHandler($sign)
+{
+    !($sign == SIGINT) ?: ZCache::dieDo();
+}
+
 $configs = [
     'gkw1' => [
-        'cache' => 'array',
+        'cache' => 'file',
         'task' => 0,
-        'start' => 'https://www.xuu234.com/xuanhuan/',
+        'start' => 'https://www.zhetian.org/sort.html',
         '%pageList' => [
             'name' => 'pageList',
-            'home' => '', 
-            'urlSub' => '</a><a href="@" class="next" title="下一页">',
+            'home' => 'https://www.zhetian.org',
+            'urlSub' => '<a href="@class="next number"',
             'page' => 10,
             'data' => [
                 'page' => function ($pageInfo) {
@@ -21,6 +30,7 @@ $configs = [
                 'home' => '',
                 'data' => [
                     'page' => function ($pageInfo) {
+                        exit("zzz");
                     },
                 ],
                 '%xsInfo' => [
@@ -41,22 +51,23 @@ $configs = [
     ],
 ];
 
-$zspider = new ZSpider();
+interface Cache{
+    static function get($key);
 
-$zspider->fetch_url['fetch_url'] = function ($url) {
-    if (strstr($url, 'yuwen')) {
-        $url = '';
-    }
-    return $url;
-};
-$zspider->fetch_url_list['fetch_url_list'] = function ($url) {
-    return $url;
-};
+    static function put($key, $value);
 
-$zspider->start($configs);
+    static function lpush($key, $value);
 
+    static function rpush($key, $value);
 
-class ZRedis
+    static function lpop($key);
+
+    static function rpop($key);
+
+    static function delete($key);
+}
+
+class ZRedis implements Cache
 {
 
     public static $redis;
@@ -134,7 +145,7 @@ class ZRedis
 
 }
 
-class ZArray{
+class ZArray implements Cache{
     public static $array;
 
     public static function show(){
@@ -174,15 +185,109 @@ class ZArray{
     }
 }
 
+class ZFile implements Cache{
+    public static $path;
+
+    public static function init(){
+        $tempPath = sys_get_temp_dir() . "/ZSpider";
+        is_dir($tempPath) ?: mkdir($tempPath);
+        delDir($tempPath, 1);
+        self::$path = $tempPath;
+    }
+
+    public static function show(){
+        return self::getFilesData(self::$path);
+    }
+
+    public static function get($key){
+        return self::readFile($key);
+    }
+
+    public static function put($key, $value){
+        self::writeFile($key, $value);
+    }
+
+    public static function lpush($key, $value){
+        $data = (array)self::readFile($key);
+        array_unshift($data, $value);
+        self::writeFile($key, $data);
+    }
+
+    public static function rpush($key, $value){
+        $data = (array)self::readFile($key);
+        array_push($data, $value);
+        self::writeFile($key, $data);
+    }
+
+    public static function lpop($key){
+        $data = (array)self::readFile($key);
+        $value = array_shift($data);
+        self::writeFile($key, $data);
+        return $value;
+    }
+
+    public static function rpop($key){
+        $data = (array)self::readFile($key);
+        $value = array_pop($data);
+        self::writeFile($key, $data);
+        return $value;
+    }
+
+    public static function delete($key){
+        self::delFile($key);
+    }
+
+    public static function readFile($key){
+        $file = self::$path . "/$key";
+        if (is_file($file)){
+            $value = file_get_contents($file);
+            $value_ser = @unserialize($value);
+            if (is_object($value_ser) || is_array($value_ser)) {
+                return $value_ser;
+            }
+            return $value;
+        }else{
+            return null;
+        }
+    }
+
+    public static function writeFile($key, $value){
+        if (is_object($value) || is_array($value)) {
+            $value = serialize($value);
+        }
+        $file = self::$path . "/$key";
+        !is_file($file) ?: touch($file);
+        file_put_contents($file, $value);
+    }
+
+    public static function delFile($key){
+        $file = self::$path . "/$key";
+        !is_file($file) ?: unlink($file);
+    }
+
+    public static function getFilesData($path){
+        $fileList = array_filter((array)scandir($path), function ($value){
+            return !in_array($value, ['.', '..']);
+        });
+        $data = [];
+        array_walk($fileList, function($value)use(&$data){
+            $data[$value] = self::readFile($value);
+        });
+        return $data;
+    }
+}
+
 class ZCache{
 
     public static $cache;
 
     public static function init($cache){
         $cacheList = [
-          'redis' => 'ZRedis',
-          'array' => 'ZArray',
+            'redis' => 'ZRedis',
+            'array' => 'ZArray',
+            'file' => 'ZFile',
         ];
+
         self::$cache = array_get($cacheList, $cache, $cacheList['array']);
 
         self::$cache::init();
@@ -192,7 +297,27 @@ class ZCache{
     {
         return call_user_func_array(self::$cache . "::$name", $arguments);
     }
+
+    public static function dieDo(){
+        print_r(self::$cache::show());
+        print_r('die');
+        exit("zzz");
+    }
 }
+
+$zspider = new ZSpider();
+
+$zspider->fetch_url['fetch_url'] = function ($url) {
+    if (strstr($url, 'yuwen')) {
+        $url = '';
+    }
+    return $url;
+};
+$zspider->fetch_url_list['fetch_url_list'] = function ($url) {
+    return $url;
+};
+
+$zspider->start($configs);
 
 class ZSpider
 {
@@ -206,98 +331,7 @@ class ZSpider
 
     public static $redis;
 
-    public function doTask($taskContainer, $parentData)
-    {
-
-        $name = $taskContainer['name'];
-        $urlSub = $taskContainer['urlSub'];
-        $home = array_get($taskContainer, 'home');
-        $page = array_get($taskContainer, 'page');
-        $data = array_get($taskContainer, 'data');
-
-        $urlList = $parentData;
-        $childTasks = getChildTasks($taskContainer);
-
-        foreach ($urlList as $url) {
-
-            foreach ($this->fetch_url as $key => $func) {
-                if ($key == $name) {
-                    $url = $func($url);
-                    break;
-                }
-            }
-
-            if (empty($url)) {
-                continue;
-            }
-
-            $html = getHtml($url);
-            if (empty($html)) {
-                $html = curlGetHtml($url);
-            }
-
-            print_r([$name => $url]);
-
-            $pageData = dataFun($data, ['url' => $url, 'html' => $html]);
-            fetchFun(array_get($this->on_fetch, $name), $pageData);
-
-            $nowPage = 1;
-            if ($page) {
-                ZCache::rpush('data_queue', ['urlList' => [$url], 'task_name' => first($childTasks)['name']]);
-
-                while ($html) {
-                    $nowPage++;
-                    if (is_numeric($page) && $nowPage >= $page){
-                        break;
-                    }
-
-                    $pageUrl = getUrlList($html, $urlSub);
-
-                    if (empty($pageUrl)) {
-                        break;
-                    }
-
-                    $pageUrl = $home . first($pageUrl);
-
-                    ZCache::rpush('data_queue', ['urlList' => [$pageUrl], 'task_name' => first($childTasks)['name']]);
-
-                    $html = getHtml($pageUrl);
-
-                    print_r(['pageUrl' => $pageUrl, 'page' => $nowPage]);
-                }
-
-                return;
-            } else {
-                $childUrlList = getUrlList($html, $urlSub);
-                $childUrlList = $home ? addUrlHome($childUrlList, $home, $url) : $childUrlList;
-            }
-
-            foreach ($this->fetch_url_list as $key => $func) {
-                if ($key == $name) {
-                    $childUrlList = $func($childUrlList);
-                    break;
-                }
-            }
-
-            if (empty($childTasks)) {
-                return;
-            }
-
-            foreach ($childTasks as $childTask) {
-
-                if (empty($childUrlList)) {
-                    continue;
-                }
-
-                $childTaskName = $childTask['name'];
-
-                ZCache::rpush('data_queue', ['urlList' => $childUrlList, 'task_name' => $childTaskName]);
-
-            }
-
-        }
-
-    }
+    public static $pageArray;
 
     public function start($configs)
     {
@@ -374,6 +408,81 @@ class ZSpider
 
     }
 
+    public function doTask($taskContainer, $parentData)
+    {
+        $name = $taskContainer['name'];
+        $urlSub = $taskContainer['urlSub'];
+        $home = array_get($taskContainer, 'home');
+        $page = array_get($taskContainer, 'page');
+        $data = array_get($taskContainer, 'data');
+
+        $urlList = $parentData;
+        $childTasks = getChildTasks($taskContainer) ;
+
+        foreach ($urlList as $url) {
+
+            foreach ($this->fetch_url as $key => $func) {
+                if ($key == $name) {
+                    $url = $func($url);
+                    break;
+                }
+            }
+
+            if (empty($url)) {
+                continue;
+            }
+
+            $html = curlGetHtml($url);
+            if (empty($html)) {
+                $html = curlGetHtml($url);
+            }
+
+            print_r([$name => $url]);
+
+            $pageData = dataFun($data, ['url' => $url, 'html' => $html]);
+            fetchFun(array_get($this->on_fetch, $name), $pageData);
+
+            $childUrlList = getUrlList($html, $urlSub);
+            $childUrlList = $home ? addUrlHome($childUrlList, $home, $url) : $childUrlList;
+
+            foreach ($this->fetch_url_list as $key => $func) {
+                if ($key == $name) {
+                    $childUrlList = $func($childUrlList);
+                    break;
+                }
+            }
+
+            if (empty($childTasks)) {
+                return;
+            }
+
+            foreach ($childTasks as $childTask) {
+
+                if (empty($childUrlList)) {
+                    continue;
+                }
+
+                $childTaskName = $childTask['name'];
+                $currentTaskName = $taskContainer['name'];
+
+                if ($page){
+                    if (is_numeric($page)){
+                        isset(ZSpider::$pageArray[$name]) ? ZSpider::$pageArray[$name]-- : ZSpider::$pageArray[$name] = $page--;
+                        (!ZSpider::$pageArray[$name]) ?: ZCache::rpush('data_queue', ['urlList' => $childUrlList, 'task_name' => $currentTaskName]);
+                    }else{
+                        ZCache::rpush('data_queue', ['urlList' => $childUrlList, 'task_name' => $currentTaskName]);
+                    }
+                }else{
+                    ZCache::rpush('data_queue', ['urlList' => $childUrlList, 'task_name' => $childTaskName]);
+                }
+
+                !function_exists('pcntl_signal_dispatch') ?: pcntl_signal_dispatch();
+            }
+
+        }
+
+    }
+
     public function getTaskDraw($taskContainer)
     {
         $childTasks = getChildTasks($taskContainer);
@@ -446,6 +555,8 @@ function preg_sub_url($html, $urlSub)
 
 function array_get($array, $index, $default = null)
 {
+    $a = ['1'];
+
     return !empty($array) && isset($array[$index]) ? $array[$index] : $default;
 }
 
@@ -459,19 +570,13 @@ function last(Array $array)
     return end($array);
 }
 
-function getHtml($url)
-{
-    $html = @file_get_contents($url);
-    $html = @mb_convert_encoding((string)$html, 'UTF-8', 'UTF-8,gb2312');
-    return $html;
-}
-
 function curlGetHtml($url)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Opera/9.80 (Windows NT 6.2; Win64; x64) Presto/2.12.388 Version/12.15');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     $html = curl_exec($ch);
     $html = @mb_convert_encoding((string)$html, 'UTF-8', 'UTF-8,gb2312');
@@ -479,12 +584,12 @@ function curlGetHtml($url)
     return $html;
 }
 
-function getCurl($url, $isPost = true, $data = '', $query = false, $ch = '', $header = [], $isHeader = false)
+function getCurl($url, $isPost = true, $data = '', $ch = '', $header = [], $isHeader = false)
 {
 
     $ch = empty($ch) ? curl_init() : $ch;
 
-    $data = $query ? http_build_query($data) : $data;
+    $data = is_array($data) ? http_build_query($data) : $data;
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, $isPost);
@@ -514,7 +619,7 @@ function getPageUrlList($url, $html, $urlSub, $home)
         $pageUrl = $home . first($pageUrl);
         $pageUrlList[] = $pageUrl;
 
-        $html = getHtml($pageUrl);
+        $html = curlGetHtml($pageUrl);
 
         print_r(['page' => $pageUrl]);
     }
@@ -531,6 +636,10 @@ function getUrlList($html, $urlSub)
     if (strstr($urlSub, '@')) {
         $urlList = str_substr(first(explode('@', $urlSub)), last(explode('@', $urlSub)), $html);
         foreach ($urlList as &$url) {
+            $url = trim($url);
+            $url = trim($url, '"');
+            $url = trim($url, "'");
+
             if (strstr($url, '"')) {
                 $url = str_between($url, '"');
             }
@@ -711,4 +820,22 @@ function getUrlParameter(Array $urlArray)
 function is_json($str)
 {
     return !is_null(json_decode($str));
+}
+
+function delDir($dir, $model = 0)
+{
+    if ($handle = @opendir($dir)) {
+        while (($file = readdir($handle)) !== false) {
+            if (($file == ".") || ($file == "..")) {
+                continue;
+            }
+            if (is_dir($dir . '/' . $file)) {
+                delDir($dir . '/' . $file);
+            } else {
+                unlink($dir . '/' . $file); // 删除文件
+            }
+        }
+        @closedir($handle);
+        !($model == 0 ) ?: rmdir($dir);
+    }
 }

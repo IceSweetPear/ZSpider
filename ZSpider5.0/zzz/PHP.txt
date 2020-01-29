@@ -30,8 +30,6 @@ Cookie
 	ucfirst()   			首字母大写
 	lcfirst()   			首字母小写
 	ucwords()   		每个单词的首字母转为大写
-	htmlentities()		将所有特殊字符文本转为HTML实体
-	htmlspecialchars()   		将特殊字符文本转为HTML实体
 	strip_tags			去除html和php标签
 	strcasecmp()        		比较两个字符串（不区分大小写）：
 	strcmp(str1，str2)   		比较两个字符串（区分大小写）
@@ -53,6 +51,9 @@ Cookie
 	preg_match('/\d{2,3}/', $value, $match);		正则匹配一次
 	preg_match_all('/\d{2,3}/', $value, $match);	正则匹配所有
 	preg_replace("/0/","",$str);			正则替换
+
+	htmlentities()		将所有特殊字符文本转为HTML实体
+	htmlspecialchars()   		将特殊字符文本转为HTML实体
 
 数组	
 	array_values()		获取数组的所有值  （重置索引）
@@ -89,6 +90,10 @@ Cookie
 		require_once($file);
 		
 文件控制
+
+   创建
+	mkdir()				创建文件夹
+	touch()				创建文件
 
    打开关闭			
 	$f = fopen("webdictionary.txt", "r") 	打开文件 跟多模式选择 没有则创建
@@ -143,15 +148,21 @@ Redis
 	$redis->del($key);			删除指定键
 
 
-多进程
-	
+多进程	
 	posix_getpid() 			获取当前进pid	
-	pcntl_signal (sign , callback)		安装一个信号处理器；
-	pcntl_signal_dispatch () 		调用每个等待信号通过pcntl_signal()安装的处理器
+
+	pcntl_signal (sign , callback)		安装一个信号处理器 监听指定信号 交给指定函数处理
+
+	declare(ticks = 1);			每运行一句代码 就检测有无信号产生
+
+	pcntl_signal_dispatch () 		将信号队列交给 信号处理器处理
 
 	bool posix_kill ( int $pid , int $sig )	向进程id为$pid的进程发送$sig信号
+
 	pcntl_waitpid ( int $pid ,$status )  	会挂起当前进程，直到子进程退出，如果子进程在调用此函数之前就已退出，此函数会立刻返回。子进程使用的资源将被释放。
-		pcntl_wait($status, WNOHANG);
+
+	pcntl_wait($status, WNOHANG);
+	
 	共享内存
 		$shmKey = 123;
 		//创建共享内存段
@@ -173,6 +184,11 @@ Redis
 	error_reporting(0)			屏蔽报错
 	date_default_timezone_set("PRC");  	设置时区
 	microtime(true);			获取程序运行时间
+
+执行外部命令
+	exec('ping www.zzz.com', [$output, $return])		执行命令  $output 为返回结果 $return 为状态码 0为成功
+
+	passthru('ping www.baidu.com', $return);		$return 返回原始结果	
 插件
 	ZipArchive   文件压缩
 		        $zip = new ZipArchive();

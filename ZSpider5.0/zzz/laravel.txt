@@ -1,3 +1,4 @@
+composer require caffeinated/modules
 
 Artisan指令
 	artisan 						查看所有指令
@@ -6,9 +7,9 @@ Artisan指令
 
 	artisan make:resource User				生成资源类
 
-	artisan make:model Flight				注册model
+	artisan make:model Flight				生成model
 	
-	artisan make:middleware MiddlewareName
+	artisan make:middleware MiddlewareName		生成中间件
 
 	artisan make:seed *  				注册seeder (数据库填充)
 	artisan db:seed * 					启动seeder
@@ -24,13 +25,14 @@ Artisan指令
 
 	artisan event:generate				生成监听文件
 
-	artisan admin:make UserController --model=App\\User
-
 	php artisan queue:work --queue=high,default,low		执行计划
 
 	php artisan key:generate
 
 	php artisan passport:keys				生成 auth key
+
+  Admin
+	artisan admin:make UserController --model=App\\User		
 
 
 路由
@@ -631,8 +633,6 @@ Form表单
 
 	->display('created_at', '创建时间');	时间显示
 
-	$form->ignore(['column1', 'column2', 'column3']); 	忽略掉不保存的字段
-
    操作工具
 	$form->tools(function (Form\Tools $tools) {
 	    $tools->disableList();		去掉`列表`按钮
@@ -704,6 +704,16 @@ Form表单
 	$form->column(1/6, function ($form) {
 		$form->text();
 	});
+
+扩展包
+	caffeinated多模块
+		composer require caffeinated/modules
+
+	ichynul/configx laravel-admin 配置文件
+
+	overtrue/laravel-wechat  微信支付
+
+	ibrand/laravel-sms  短信验证
 
 
 
