@@ -279,13 +279,27 @@ class ZFile implements Cache{
         return $data;
     }
 
-    public static function addDieTask($key, $value){
+    public static function putDieTask($key, $value){
         if (is_object($value) || is_array($value)) {
             $value = serialize($value);
         }
         $file = self::$pausePath . "/$key";
         !is_file($file) ?: touch($file);
         file_put_contents($file, $value);
+    }
+
+    public static function getDieTask($key){
+        $file = self::$pausePath . "/$key";
+        if (is_file($file)){
+            $value = file_get_contents($file);
+            $value_ser = @unserialize($value);
+            if (is_object($value_ser) || is_array($value_ser)) {
+                return $value_ser;
+            }
+            return $value;
+        }else{
+            return null;
+        }
     }
 }
 
@@ -319,9 +333,9 @@ class ZCache{
 
         $key = substr(md5(time()), 0, 12);
 
-        ZFile::addDieTask($key, $unFinishTask);
+        ZFile::putDieTask($key, $unFinishTask);
 
-        echo $key;
+        echo "$key\n";
         exit();
     }
 }
@@ -380,7 +394,7 @@ class ZSpider
 
             ZCache::delete('data_queue');
 
-            if (!empty($key) && $pauseData = ZFile::get($key)){
+            if (!empty($key) && $pauseData = first(array_get(ZFile::getDieTask($key), 'data_queue'))){
                 echo "继续任务\n";
                 ZCache::rpush('data_queue', $pauseData);
             }else{
