@@ -1,14 +1,5 @@
 ﻿<?php
 
-print sys_get_temp_dir();
-
-!function_exists('pcntl_signal') ?: pcntl_signal(SIGINT,  'exitSignHandler');
-
-function exitSignHandler($sign)
-{
-    !($sign == SIGINT) ?: ZCache::dieDo();
-}
-
 $configs = [
     'gkw1' => [
         'cache' => 'file',
@@ -187,16 +178,28 @@ class ZArray implements Cache{
 
 class ZFile implements Cache{
     public static $path;
+    public static $runPath;
+    public static $pausePath;
 
     public static function init(){
         $tempPath = sys_get_temp_dir() . "/ZSpider";
+
+        $runTaskPath = $tempPath . "/run";
+        $pauseTaskPath = $tempPath . "/pause";
+
         is_dir($tempPath) ?: mkdir($tempPath);
-        delDir($tempPath, 1);
-        self::$path = $tempPath;
+
+        is_dir($runTaskPath) ?: mkdir($runTaskPath);
+        delDir($runTaskPath, 1);
+
+        is_dir($pauseTaskPath) ?: mkdir($pauseTaskPath);
+
+        self::$runPath = $runTaskPath;
+        self::$pausePath = $pauseTaskPath;
     }
 
     public static function show(){
-        return self::getFilesData(self::$path);
+        return self::getFilesData(self::$runPath);
     }
 
     public static function get($key){
@@ -238,7 +241,7 @@ class ZFile implements Cache{
     }
 
     public static function readFile($key){
-        $file = self::$path . "/$key";
+        $file = self::$runPath . "/$key";
         if (is_file($file)){
             $value = file_get_contents($file);
             $value_ser = @unserialize($value);
@@ -255,18 +258,18 @@ class ZFile implements Cache{
         if (is_object($value) || is_array($value)) {
             $value = serialize($value);
         }
-        $file = self::$path . "/$key";
+        $file = self::$runPath . "/$key";
         !is_file($file) ?: touch($file);
         file_put_contents($file, $value);
     }
 
     public static function delFile($key){
-        $file = self::$path . "/$key";
+        $file = self::$runPath . "/$key";
         !is_file($file) ?: unlink($file);
     }
 
-    public static function getFilesData($path){
-        $fileList = array_filter((array)scandir($path), function ($value){
+    public static function getFilesData($runPath){
+        $fileList = array_filter((array)scandir($runPath), function ($value){
             return !in_array($value, ['.', '..']);
         });
         $data = [];
@@ -274,6 +277,15 @@ class ZFile implements Cache{
             $data[$value] = self::readFile($value);
         });
         return $data;
+    }
+
+    public static function addDieTask($key, $value){
+        if (is_object($value) || is_array($value)) {
+            $value = serialize($value);
+        }
+        $file = self::$pausePath . "/$key";
+        !is_file($file) ?: touch($file);
+        file_put_contents($file, $value);
     }
 }
 
@@ -299,10 +311,26 @@ class ZCache{
     }
 
     public static function dieDo(){
-        print_r(self::$cache::show());
-        print_r('die');
-        exit("zzz");
+        $unFinishTask = self::$cache::show();
+
+        if (empty($unFinishTask)){
+            exit("No Remaining Tasks");
+        }
+
+        $key = substr(md5(time()), 0, 12);
+
+        ZFile::addDieTask($key, $unFinishTask);
+
+        echo $key;
+        exit();
     }
+}
+
+!function_exists('pcntl_signal') ?: pcntl_signal(SIGINT,  'exitSignHandler');
+
+function exitSignHandler($sign)
+{
+    !($sign == SIGINT) ?: ZCache::dieDo();
 }
 
 $zspider = new ZSpider();
@@ -333,8 +361,12 @@ class ZSpider
 
     public static $pageArray;
 
+
     public function start($configs)
     {
+        $param = getopt('', ['key:']);
+        $key = array_get($param, 'key');
+
         foreach ($configs as $configName => $config) {
 
             $this->getTaskDraw($config);
@@ -347,7 +379,13 @@ class ZSpider
             ZCache::init($config['cache']);
 
             ZCache::delete('data_queue');
-            ZCache::rpush('data_queue', ['urlList' => [$config['start']], 'task_name' => $childTaskName]);
+
+            if (!empty($key) && $pauseData = ZFile::get($key)){
+                echo "继续任务\n";
+                ZCache::rpush('data_queue', $pauseData);
+            }else{
+                ZCache::rpush('data_queue', ['urlList' => [$config['start']], 'task_name' => $childTaskName]);
+            }
 
             $task = array_get($config, 'task', 0);
             $index = 0;
