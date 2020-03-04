@@ -1,17 +1,39 @@
 ﻿<?php
 
+$file = fopen('transfer_type.csv', 'w+');
+
 $configs = [
     'gkw1' => [
         'cache' => 'file',
         'task' => 0,
-        'start' => 'https://www.zhetian.org/sort.html',
+        'start' => 'www.koduo.com/leimu/',
         '%pageList' => [
             'name' => 'pageList',
-            'home' => 'https://www.zhetian.org',
-            'urlSub' => '<a href="@class="next number"',
-            'page' => 10,
+            'home' => '',
+            'urlSub' => '',
+            'page' => 0,
             'data' => [
-                'page' => function ($pageInfo) {
+                'page' => function ($pageInfo)use($file) {
+                    $html = $pageInfo['html'];
+
+                    $typeList = str_substr('<td', '</td>', $html);
+
+                    foreach ($typeList as $typeInfo){
+                        $parentType = first(str_substr('<strong>', '</strong>', $typeInfo));
+                        $parentType = trim(strip_tags($parentType));
+
+                        $data = [$parentType];
+
+                        $typeInfo = str_replace(' ', '', $typeInfo);
+                        $typeInfo = str_replace($parentType, '', $typeInfo);
+                        preg_match_all('/[\x7f-\xff]+/', $typeInfo, $match);
+
+                        $data[] = implode(',', $match[0]);
+
+                        fputcsv($file, $data);
+                    }
+
+                    exit("zzz");
                 },
             ],
             '%xsList' => [
@@ -687,8 +709,12 @@ function getUrlList($html, $urlSub)
     $urlList = [];
     if (strstr($urlSub, '@')) {
         $urlList = str_substr(first(explode('@', $urlSub)), last(explode('@', $urlSub)), $html);
+
         foreach ($urlList as &$url) {
             $url = trim($url);
+
+            $url = strip_tags($url);
+
             $url = trim($url, '"');
             $url = trim($url, "'");
 
@@ -698,6 +724,8 @@ function getUrlList($html, $urlSub)
             if (strstr($url, "'")) {
                 $url = str_between($url, "'");
             }
+
+            $url = trim($url);
         }
 
     } elseif (strstr($urlSub, '#')) {
