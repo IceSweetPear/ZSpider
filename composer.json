@@ -1,0 +1,23 @@
+{
+    "name": "xuezahngbb/phpspider",
+    "authors": [
+        {
+            "name": "zzz",
+            "email": "157323060@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "files": [
+            "helper/helper.php",
+            "ZSpider.php",
+            "cache/CacheInterface.php",
+            "cache/ZCache.php",
+            "cache/ZArray.php",
+            "cache/ZFile.php",
+            "cache/ZRedis.php"
+        ]
+    }
+}
