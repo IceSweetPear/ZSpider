@@ -13,7 +13,7 @@ $json = $GLOBALS['HTTP_RAW_POST_DATA'];
 $data = json_decode($json, true);
  
 // 打开网站目录下的hooks.log文件 需要在服务器上创建 并给写权限
-$fs = fopen('./webhooks_pull.log', 'a');
+$fs = fopen('./web_hook.log', 'a');
 fwrite($fs, '================ Update Start ===============' . PHP_EOL . PHP_EOL);
 // 自定义密码 用于验证 与码云后台设置保持一致
 $access_token = 'zkym';
