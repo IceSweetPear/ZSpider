@@ -1,6 +1,9 @@
 <?php
 use cache\ZCache;
 
+echo "xxx";
+exit();
+
 require './vendor/autoload.php';
 
 
@@ -234,4 +237,6 @@ function exitSignHandler($sign)
 $zspider = new ZSpider();
 
 $zspider->start($configs);
+
+
 
