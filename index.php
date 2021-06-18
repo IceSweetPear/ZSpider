@@ -5,6 +5,7 @@ require './vendor/autoload.php';
 
 
 echo "zzz";
+exit("zzz");
 
 $uploadCh = curl_init();
 $uploadUrl = 'http://www.xuezhangbb.com/api/v1/news/schoolexam/upload';
