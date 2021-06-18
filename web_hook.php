@@ -1,6 +1,6 @@
 
 <?php
 
-exec('cd /www/wwwroot/zsplider; git pull;echo "zzz"');
+$output = shell_exec('ls');
 
-echo "zzz";
+echo "$output";
