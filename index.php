@@ -1,9 +1,6 @@
 <?php
 use cache\ZCache;
 
-echo "xxx";
-exit();
-
 require './vendor/autoload.php';
 
 
