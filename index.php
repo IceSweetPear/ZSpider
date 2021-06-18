@@ -4,6 +4,8 @@ use cache\ZCache;
 require './vendor/autoload.php';
 
 
+echo "zzz";
+
 $uploadCh = curl_init();
 $uploadUrl = 'http://www.xuezhangbb.com/api/v1/news/schoolexam/upload';
 $getHeaderCh = curl_init();
