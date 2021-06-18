@@ -17,5 +17,4 @@ $json = $GLOBALS['HTTP_RAW_POST_DATA'];
 $client_ip = $_SERVER['REMOTE_ADDR'];
 
 // 执行shell命令,cd到网站根目录，执行git pull进行拉取代码，并把返回信息写进日志
-exec('cd /www/wwwroot/zsplider; git pull');
-
+exec('cd /www/wwwroot/zsplider; git pull;echo "zzz"');
