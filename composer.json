@@ -19,5 +19,6 @@
             "cache/ZFile.php",
             "cache/ZRedis.php"
         ]
-    }
+    },
+    "license": "MIT"
 }
