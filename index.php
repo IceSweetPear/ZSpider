@@ -3,6 +3,7 @@ use cache\ZCache;
 
 require './vendor/autoload.php';
 
+echo "zzz";
 exit("zzz");
 
 $uploadCh = curl_init();
