@@ -1,14 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xuezahngbb
- * Date: 2020/6/9
- * Time: 13:10
- */
+namespace IceSweetPear;
 
-use cache\ZCache;
-use socket\SocketServer;
-use socket\SocketUser;
+use IceSweetPear\cache\ZCache;
+use IceSweetPear\socket\SocketServer;
+use IceSweetPear\socket\SocketUser;
 
 class ZSpider
 {
@@ -25,6 +20,8 @@ class ZSpider
 
     public function start($task)
     {
+        require 'init.php';
+
         //命令输入
         $param = getopt('', ['key:']);
         $key = array_get($param, 'key');

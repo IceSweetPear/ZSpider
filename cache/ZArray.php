@@ -6,7 +6,7 @@
  * Time: 13:42
  */
 
-namespace cache;
+namespace IceSweetPear\cache;
 
 class ZArray implements CacheInterface{
 

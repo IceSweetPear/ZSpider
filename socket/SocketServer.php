@@ -5,7 +5,7 @@
  * Date: 2021/5/16
  * Time: 23:30
  */
-namespace socket;
+namespace IceSweetPear\socket;
 
 class SocketServer
 {

@@ -1,6 +1,7 @@
 <?php
+use IceSweetPear\ZSpider;
 
-require 'init.php';
+require './vendor/autoload.php';
 
 $file = fopen('./zzz.csv', 'w+');
 

@@ -6,7 +6,7 @@
  * Time: 13:07
  */
 
-namespace cache;
+namespace IceSweetPear\cache;
 
 class ZCache{
 
