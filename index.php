@@ -1,5 +1,5 @@
 <?php
-use IceSweetPear\ZSpider;
+use IceSweetPear\phpspider\ZSpider;
 
 require './vendor/autoload.php';
 require './autoload.php';

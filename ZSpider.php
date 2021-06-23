@@ -1,9 +1,9 @@
 <?php
-namespace IceSweetPear;
+namespace IceSweetPear\phpspider;
 
-use IceSweetPear\cache\ZCache;
-use IceSweetPear\socket\SocketServer;
-use IceSweetPear\socket\SocketUser;
+use IceSweetPear\phpspider\cache\ZCache;
+use IceSweetPear\phpspider\socket\SocketServer;
+use IceSweetPear\phpspider\socket\SocketUser;
 
 class ZSpider
 {

@@ -6,7 +6,7 @@
  * Time: 13:42
  */
 
-namespace IceSweetPear\cache;
+namespace IceSweetPear\phpspider\cache;
 
 class ZRedis implements CacheInterface{
 

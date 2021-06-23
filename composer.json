@@ -1,5 +1,5 @@
 {
-    "name": "xuezahngbb/phpspider",
+    "name": "icesweetpear/phpspider",
     "authors": [
         {
             "name": "zzz",
@@ -11,13 +11,8 @@
     },
     "autoload": {
         "files": [
-            "helper/helper.php",
-            "ZSpider.php",
-            "cache/CacheInterface.php",
-            "cache/ZCache.php",
-            "cache/ZArray.php",
-            "cache/ZFile.php",
-            "cache/ZRedis.php"
+            "helper/helper.php"
         ]
-    }
+    },
+    "license": "MIT"
 }

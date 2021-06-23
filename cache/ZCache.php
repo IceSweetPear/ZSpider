@@ -6,7 +6,7 @@
  * Time: 13:07
  */
 
-namespace IceSweetPear\cache;
+namespace IceSweetPear\phpspider\cache;
 
 class ZCache{
 

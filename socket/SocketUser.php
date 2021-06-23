@@ -5,7 +5,7 @@
  * Date: 2021/5/16
  * Time: 23:30
  */
-namespace IceSweetPear\socket;
+namespace IceSweetPear\phpspider\socket;
 
 class SocketUser
 {

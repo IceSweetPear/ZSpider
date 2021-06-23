@@ -1,6 +1,6 @@
 <?php
 
-namespace IceSweetPear\cache;
+namespace IceSweetPear\phpspider\cache;
 
 interface CacheInterface{
     static function get($key);

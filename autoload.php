@@ -13,7 +13,7 @@ spl_autoload_register(function ($className) {
     }
     $fileName = __DIR__ . DIRECTORY_SEPARATOR . $fileName . $className . '.php';
 
-    $fileName = str_replace('IceSweetPear\\', '', $fileName);
+    $fileName = str_replace('IceSweetPear\phpspider\\', '', $fileName);
 
     if (file_exists($fileName)) {
 
