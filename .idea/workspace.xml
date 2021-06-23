@@ -13,173 +13,6 @@
   <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="-926331240">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="1" />
-          <entry key="project.open.time.0" value="2" />
-          <entry key="project.opened" value="2" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="json" value="2" />
-          <entry key="php" value="36" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="JSON" value="2" />
-          <entry key="PHP" value="34" />
-          <entry key="PLAIN_TEXT" value="2" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="dummy" value="1" />
-          <entry key="json" value="109" />
-          <entry key="php" value="846" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="JSON" value="109" />
-          <entry key="PHP" value="836" />
-          <entry key="PLAIN_TEXT" value="11" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.php.new.class">
-        <counts>
-          <entry key="PHP Class.type" value="6" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="736057265">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="6" />
-          <entry key="project.open.time.0" value="1" />
-          <entry key="project.open.time.10" value="1" />
-          <entry key="project.open.time.7" value="1" />
-          <entry key="project.open.time.8" value="2" />
-          <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="6" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="php" value="1601" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PHP" value="1601" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="csv" value="9" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="PLAIN_TEXT" value="9" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="604814075">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="1" />
-          <entry key="project.open.time.0" value="2" />
-          <entry key="project.open.time.10" value="1" />
-          <entry key="project.opened" value="3" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="csv" value="3" />
-          <entry key="json" value="1" />
-          <entry key="php" value="36" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="JSON" value="1" />
-          <entry key="PHP" value="36" />
-          <entry key="PLAIN_TEXT" value="3" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="dummy" value="13" />
-          <entry key="php" value="3047" />
-          <entry key="txt" value="3" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PHP" value="3047" />
-          <entry key="PLAIN_TEXT" value="16" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.php.new.class">
-        <counts>
-          <entry key="PHP Class.type" value="1" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="733936785">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.open.time.0" value="1" />
-          <entry key="project.opened" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="php" value="324" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PHP" value="324" />
-        </counts>
-      </usages-collector>
-    </session>
-    <session id="537423281">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="4" />
-          <entry key="project.open.time.0" value="1" />
-          <entry key="project.open.time.6" value="1" />
-          <entry key="project.open.time.7" value="2" />
-          <entry key="project.opened" value="4" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="php" value="893" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="PHP" value="893" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="php" value="2" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="PHP" value="2" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
@@ -328,11 +161,11 @@
         <option value="$PROJECT_DIR$/cache/cache.php" />
         <option value="$PROJECT_DIR$/cache/CacheInterface.php" />
         <option value="$PROJECT_DIR$/ZSpider6.3.php" />
-        <option value="C:/ZSpider6.3.php" />
+        <option value="$PROJECT_DIR$/../../../ZSpider6.3.php" />
         <option value="$USER_HOME$/Desktop/ZSpider/ZSpider/ZSpider5.0/ZSpider6.3.php" />
         <option value="$PROJECT_DIR$/cache/ZFile.php" />
         <option value="$PROJECT_DIR$/composer.json" />
-        <option value="C:/zzz-脚本/【爬取试卷】/2school_exam_xkb.php" />
+        <option value="$PROJECT_DIR$/../../../zzz-脚本/【爬取试卷】/2school_exam_xkb.php" />
         <option value="$PROJECT_DIR$/cache/ZZZ.php" />
         <option value="$PROJECT_DIR$/cache/ZArray1.php" />
         <option value="$PROJECT_DIR$/vendor/autoload.php" />
@@ -397,7 +230,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="C:/UPUPW_ANK_W64/WebRoot/Vhosts/fengxianjiance" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../UPUPW_ANK_W64/WebRoot/Vhosts/fengxianjiance" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
@@ -534,7 +367,7 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="php">
-          <url>file://C:/zzz-脚本/【爬取试卷】/2school_exam_xkb-ZSpider6.3.php</url>
+          <url>file://$PROJECT_DIR$/../../../zzz-脚本/【爬取试卷】/2school_exam_xkb-ZSpider6.3.php</url>
           <line>61</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
@@ -550,7 +383,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ZSpider6.3.php" />
-    <entry file="file://C:/ZSpider6.3.php">
+    <entry file="file://$PROJECT_DIR$/../../../ZSpider6.3.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="193">
           <caret line="17" column="33" lean-forward="true" selection-start-line="17" selection-start-column="33" selection-end-line="17" selection-end-column="33" />
@@ -565,8 +398,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/zzz-脚本/【爬取试卷】/2school_exam_xkb-ZSpider6.3.php" />
-    <entry file="file://C:/zzz-脚本/【爬取试卷】/2school_exam_xkb.php">
+    <entry file="file://$PROJECT_DIR$/../../../zzz-脚本/【爬取试卷】/2school_exam_xkb-ZSpider6.3.php" />
+    <entry file="file://$PROJECT_DIR$/../../../zzz-脚本/【爬取试卷】/2school_exam_xkb.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
           <caret line="304" selection-start-line="304" selection-end-line="309" selection-end-column="1" />
