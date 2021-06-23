@@ -20,7 +20,7 @@ class ZSpider
 
     public function start($task)
     {
-        require 'init.php';
+        require './init.php';
 
         //命令输入
         $param = getopt('', ['key:']);

@@ -2,14 +2,15 @@
 use IceSweetPear\ZSpider;
 
 require './vendor/autoload.php';
+require './autoload.php';
 
 $file = fopen('./zzz.csv', 'w+');
 
 $tasks = [
         'cache' => 'array',
         'process' => 0,
-        'start' => 'https://www.26jio.com',
 //        'socket' => 'server',
+        'start' => 'https://www.26jio.com',
 
         '%' => [
             'name' => '1',

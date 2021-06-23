@@ -8,15 +8,16 @@ class ComposerStaticInitebb18a4be482c75eceb5004954281900
 {
     public static $files = array (
         'b0e9fa78c2086bf5d17083ab5df68bcc' => __DIR__ . '/../..' . '/helper/helper.php',
-        '207782c72830ce7b735094fff27dec0b' => __DIR__ . '/../..' . '/ZSpider.php',
-        '8e9eac4d6dae7a09cc7235e7b92d3cf2' => __DIR__ . '/../..' . '/cache/CacheInterface.php',
-        'dbb939d1190c2bdce66622d788c712a4' => __DIR__ . '/../..' . '/cache/ZCache.php',
-        'a9c8deb0a77f89d768fff4c3a5a5a2b1' => __DIR__ . '/../..' . '/cache/ZArray.php',
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->classMap = ComposerStaticInitebb18a4be482c75eceb5004954281900::$classMap;
 
         }, null, ClassLoader::class);
     }
