@@ -8,20 +8,14 @@
 
 namespace cache;
 
-class ZRedis implements CacheInterface
-{
+class ZRedis implements CacheInterface{
 
     public static $redis;
 
     public static function init()
     {
-        self::$redis = new Redis();
+        self::$redis = new \Redis();
         self::$redis->connect('127.0.0.1', 6379);
-    }
-
-    public function __construct()
-    {
-        self::init();
     }
 
     public static function put($key, $value)

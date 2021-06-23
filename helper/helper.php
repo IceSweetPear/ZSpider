@@ -12,6 +12,7 @@ function get_file_mini_type($file){
 function str_substr($start, $end, $str, $isLimit = false)
 {
     $resultList = [];
+
     $firstList = explode($start, $str);
 
     foreach ($firstList as $key => $firstInfo) {
@@ -129,25 +130,6 @@ function getCurl($url, $isPost = true, $data = '', $ch = '', $header = [], $isHe
     $curlInfo = curl_exec($ch);
 
     return $curlInfo;
-}
-
-function addUrlHome($urlList, $home, $url)
-{
-    if (strstr($home, '$')) {
-        switch ($home) {
-            case '$self':
-                $home = $url;
-                break;
-            case '$parent':
-                $home = $url;
-                break;
-        }
-    }
-
-    foreach ($urlList as &$url) {
-        $url = rtrim($home, '/') . '/' . ltrim($url, '/');
-    }
-    return $urlList;
 }
 
 function dataFun(Array $dataFunArray, $data)

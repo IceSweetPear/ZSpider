@@ -9,6 +9,7 @@
 namespace cache;
 
 class ZArray implements CacheInterface{
+
     public static $array;
 
     public static function show(){
@@ -45,5 +46,9 @@ class ZArray implements CacheInterface{
 
     public static function delete($key){
         unset(self::$array[$key]);
+    }
+
+    public static function zzz(){
+        exit("ccccccccccccc");
     }
 }

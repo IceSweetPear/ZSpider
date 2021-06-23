@@ -10,29 +10,28 @@ namespace cache;
 
 class ZCache{
 
-    public static $cache;
+    public static $cacheClass;
 
     public static function init($cache){
         $cacheList = [
-            'redis' => 'ZRedis',
-            'array' => 'ZArray',
-            'file' => 'ZFile',
+            'redis' => ZRedis::class,
+            'array' => ZArray::class,
+            'file' => ZFile::class,
         ];
-        self::$cache = array_get($cacheList, $cache, $cacheList['array']);
 
-        $cacheClass = "\cache\\" . self::$cache;
+        self::$cacheClass = array_get($cacheList, $cache, $cacheList['array']);
 
-        $cacheClass::init();
+        self::$cacheClass::init();
     }
 
     public static function __callStatic($name, $arguments)
     {
-        $cacheClass = "\cache\\" . self::$cache;
+        $cacheClass = self::$cacheClass;
         return call_user_func_array("$cacheClass::$name", $arguments);
     }
 
     public static function dieDo(){
-        $unFinishTask = self::$cache::show();
+        $unFinishTask = self::$cacheClass::show();
 
         if (empty($unFinishTask)){
             exit("No Remaining Tasks");

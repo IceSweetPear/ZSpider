@@ -1,5 +1,5 @@
 {
-    "name": "icesweetpear/phpspider",
+    "name": "xuezahngbb/phpspider",
     "authors": [
         {
             "name": "zzz",
@@ -19,6 +19,5 @@
             "cache/ZFile.php",
             "cache/ZRedis.php"
         ]
-    },
-    "license": "MIT"
+    }
 }
