@@ -6,12 +6,14 @@ require './autoload.php';
 
 $file = fopen('./zzz.csv', 'w+');
 
-$tasks = [
-        'cache' => 'array',
-        'process' => 0,
-//        'socket' => 'server',
-        'start' => 'https://www.26jio.com',
+$config = [
+    'start' => 'https://www.26jio.com',
+    'cache' => 'array',
+    'process' => 0,
+    'socket' => '',
+];
 
+$tasks = [
         '%' => [
             'name' => '1',
             'page' => false,
@@ -71,6 +73,6 @@ $tasks = [
         ],
 ];
 
-(new ZSpider())->start($tasks);
+(new ZSpider($config))->start($tasks);
 
 

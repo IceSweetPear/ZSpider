@@ -2,6 +2,7 @@
 namespace IceSweetPear\phpspider;
 
 use IceSweetPear\phpspider\cache\ZCache;
+use IceSweetPear\phpspider\cache\ZFile;
 use IceSweetPear\phpspider\socket\SocketServer;
 use IceSweetPear\phpspider\socket\SocketUser;
 
@@ -17,6 +18,10 @@ class ZSpider
 
     public static $pageArray;
 
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
 
     public function start($task)
     {
@@ -27,35 +32,32 @@ class ZSpider
         $key = array_get($param, 'key');
 
         //写入config
-        $urlInfo = parse_url($task['start']);
+        $urlInfo = parse_url($this->config['start']);
         $domain = $urlInfo['scheme'] . '://' . $urlInfo['host'];
-        $config = [
-            'domain' => $domain
-        ];
-        $this->config = $config;
 
-        $socket = $task['socket'] ?? '';
+        $this->config['domain'] = $domain;
+
+        $socket = $this->config['socket'];
 
         $this->getTaskDraw($task);
 
-        $taskContainers = $this->getChildTasks($task);
-        $taskContainer = first($taskContainers);
+        $taskContainer = first($this->getChildTasks($task));
 
         $childTaskName = $taskContainer['name'];
 
         //初始化缓存
-        ZCache::init($task['cache']);
+        ZCache::init($this->config['cache']);
         ZCache::delete('data_queue');
 
         //继续任务
-        if (!empty($key) && $pauseData = first(array_get(\cache\ZFile::getDieTask($key), 'data_queue'))) {
+        if (!empty($key) && $pauseData = first(array_get(ZFile::getDieTask($key), 'data_queue'))) {
             echo "继续任务\n";
             ZCache::rpush('data_queue', $pauseData);
         } else {
-            ZCache::rpush('data_queue', ['url_list' => [$task['start']], 'task_name' => $childTaskName]);
+            ZCache::rpush('data_queue', ['url_list' => [$this->config['start']], 'task_name' => $childTaskName]);
         }
 
-        $process = array_get($task, 'process', 0);
+        $process = $this->config['process'];
 
         //单进程
         if ($process <= 1) {
@@ -400,7 +402,7 @@ class ZSpider
     {
         $index = 0;
 
-        while ($index < array_get($task, 'process', 1)) {
+        while ($index < array_get($this->config, 'process', 1)) {
             $index++;
             $pid = pcntl_fork();
             if ($pid == -1) {
