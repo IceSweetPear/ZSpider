@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'b0e9fa78c2086bf5d17083ab5df68bcc' => $baseDir . '/helper/helper.php',
+    '166d4e1ac4d525122002e0f3e8a45bab' => $baseDir . '/helper/helper.php',
 );
