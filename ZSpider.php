@@ -21,6 +21,22 @@ class ZSpider
     public function __construct($config)
     {
         $this->config = $config;
+        $this->init();
+    }
+
+    public function init(){
+        setlocale(LC_ALL, 'zh_CN.UTF-8');
+
+        function_exists('pcntl_signal') && pcntl_signal(SIGINT,  'exitSignHandler');
+
+        if (!function_exists('exitSignHandler')){
+            function exitSignHandler($sign){
+                if ($sign == SIGINT){
+                    ZCache::dieDo();
+                }
+            }
+        }
+
     }
 
     public function start($task)
